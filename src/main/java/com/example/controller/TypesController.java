@@ -1,6 +1,6 @@
 package com.example.controller;
 
-import com.example.dto.RegionDto;
+
 import com.example.dto.TypesCreateDto;
 import com.example.dto.TypesDto;
 import com.example.enums.LanguageEnum;
@@ -39,7 +39,7 @@ public class TypesController {
 
     @GetMapping("/all/types")
     public ResponseEntity<List<TypesDto>> allTypes(){
-        // todo 4. Get List (ADMIN) (Pagination) (id, key, name_uz, name_ru, name_en, visible, created_date)
+        // todo 4. Get List (ADMIN) (Pagination) (id, key, name_uz, name_ru, name_en, visible, created_date) // xato
         return ResponseEntity.ok(typesService.allTypesService());
     }
 

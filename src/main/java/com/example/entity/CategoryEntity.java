@@ -5,17 +5,19 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+
 @Getter
 @Setter
 @Entity
-@Table(name = "types")
-public class TypesEntity {
+@Table(name = "category")
+public class CategoryEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "key")
-    private String key;
+    @Column(name = "order_number")
+    private Integer orderNumber;
 
     @Column(name = "name_uz")
     private String nameUz;
@@ -31,4 +33,5 @@ public class TypesEntity {
 
     @Column(name = "created_date")
     private LocalDate createdDate = LocalDate.now();
+
 }
