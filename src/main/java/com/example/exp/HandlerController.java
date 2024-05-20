@@ -1,4 +1,4 @@
-package com.example.controller;
+package com.example.exp;
 
 import com.example.exp.AppBadException;
 import org.springframework.http.ResponseEntity;
