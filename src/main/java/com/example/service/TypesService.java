@@ -9,6 +9,10 @@ import com.example.enums.LanguageEnum;
 import com.example.exp.AppBadException;
 import com.example.repository.TypesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -44,13 +48,12 @@ public class TypesService {
         return true;
     }
 
-    public List<TypesDto> allTypesService() {
-        Iterable<TypesEntity> entity = typesRepository.findAll();
-        List<TypesDto> list = new ArrayList<>();
-        for (TypesEntity typesEntity : entity) {
-            list.add(toTypesDto(typesEntity));
-        }
-        return list;
+    public Page<TypesDto> allTypesService(Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<TypesEntity> entity = typesRepository.findAll(pageable);
+
+
+        return toPageTypesDto(entity,pageable);
     }
 
     public List<TypesDto> langTypesService(LanguageEnum lang) {
@@ -109,6 +112,23 @@ public class TypesService {
         typesDto.setCreatedDate(typesEntity.getCreatedDate());
 
         return typesDto;
+    }
+
+    public Page<TypesDto> toPageTypesDto(Page<TypesEntity> entityPage, Pageable pageable) {
+        List<TypesDto> list = new ArrayList<>();
+        for (TypesEntity entity : entityPage) {
+            TypesDto typesDto = new TypesDto();
+            typesDto.setId(entity.getId());
+            typesDto.setKey(entity.getKey());
+            typesDto.setNameUz(entity.getNameUz());
+            typesDto.setNameRu(entity.getNameRu());
+            typesDto.setNameEn(entity.getNameEn());
+            typesDto.setVisible(entity.getVisible());
+            typesDto.setCreatedDate(entity.getCreatedDate());
+            list.add(typesDto);
+        }
+        Long totalElements = entityPage.getTotalElements();
+        return new PageImpl<>(list, pageable, totalElements);
     }
 
 

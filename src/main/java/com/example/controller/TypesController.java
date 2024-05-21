@@ -6,6 +6,7 @@ import com.example.dto.TypesDto;
 import com.example.enums.LanguageEnum;
 import com.example.service.TypesService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,14 +39,15 @@ public class TypesController {
     }
 
     @GetMapping("/all/types")
-    public ResponseEntity<List<TypesDto>> allTypes(){
+    public ResponseEntity<Page<TypesDto>> allTypes(@RequestParam("page") Integer page,
+                                                   @RequestParam("size") Integer size) {
         // todo 4. Get List (ADMIN) (Pagination) (id, key, name_uz, name_ru, name_en, visible, created_date) // xato
-        return ResponseEntity.ok(typesService.allTypesService());
+        return ResponseEntity.ok(typesService.allTypesService(page, size));
     }
 
     @GetMapping("/lang/types")
     public ResponseEntity<List<TypesDto>> langTypes(@RequestHeader(value = "Accept-Language", defaultValue = "UZ")
-                                                         LanguageEnum lang) {
+                                                    LanguageEnum lang) {
         // todo 5. Get By Lang (Language keladi shu language dagi name larini berib yuboramiz)
         //        (id,key,name) (name ga tegishli name_.. dagi qiymat qo'yiladi.)
         return ResponseEntity.ok(typesService.langTypesService(lang));
@@ -53,7 +55,7 @@ public class TypesController {
 
     @GetMapping("/lang2/types")
     public ResponseEntity<List<TypesDto>> langTypes2(@RequestHeader(value = "Accept-Language", defaultValue = "UZ")
-                                                    LanguageEnum lang) {
+                                                     LanguageEnum lang) {
         // todo 5.2 Get By Lang (Language keladi shu language dagi name larini berib yuboramiz)
         //        (id,key,name) (name ga tegishli name_.. dagi qiymat qo'yiladi.)
         return ResponseEntity.ok(typesService.findAllLang2(lang));
