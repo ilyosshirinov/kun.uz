@@ -44,7 +44,7 @@ public class ProfileService {
 
     public Boolean updateAdminProfileService(Integer id, Role role, ProfileCreateDto profileCreateDto) {
         ProfileEntity entity = get(id);
-        if (role.equals(Role.ADMIN)) {
+        if (role.equals(Role.ROLE_ADMIN)) {
             entity.setName(profileCreateDto.getName());
             entity.setSurname(profileCreateDto.getSurname());
             entity.setEmail(profileCreateDto.getEmail());
