@@ -1,12 +1,12 @@
-package com.example.dto;
+package com.example.dto.profile;
 
-import com.example.enums.Role;
-import com.example.enums.Status;
+import com.example.enums.ProfileRole;
+import com.example.enums.ProfileStatus;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -24,13 +24,14 @@ public class ProfileDto {
 
     private String password;
 
-    private Status status;
+    private ProfileStatus status;
 
-    private Role role;
+    private ProfileRole role;
 
     private Boolean visible;
 
-    private LocalDateTime createdDate;
+
+    private LocalDate createdDate;
 
     private String photoId;
 }

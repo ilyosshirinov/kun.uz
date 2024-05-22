@@ -2,15 +2,15 @@ package com.example.service;
 
 import com.example.dto.auth.AuthRegistrationDto;
 import com.example.entity.ProfileEntity;
-import com.example.enums.Role;
-import com.example.enums.Status;
+import com.example.enums.ProfileRole;
+import com.example.enums.ProfileStatus;
 import com.example.exp.AppBadException;
 import com.example.repository.ProfileRepository;
 import com.example.util.MD5Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Service
@@ -31,9 +31,9 @@ public class AuthService {
             entity.setEmail(dto.getEmail());
             entity.setPassword(MD5Util.getMD5(dto.getPassword()));
 
-            entity.setCreatedDate(LocalDateTime.now());
-            entity.setRole(Role.ROLE_USER);
-            entity.setStatus(Status.ACTIVE);
+            entity.setCreatedDate(LocalDate.now());
+            entity.setRole(ProfileRole.ROLE_USER);
+            entity.setStatus(ProfileStatus.ACTIVE);
 
             profileRepository.save(entity);
 

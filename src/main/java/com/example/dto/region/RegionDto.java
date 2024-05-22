@@ -1,22 +1,22 @@
-package com.example.dto;
+package com.example.dto.region;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
-
-@Data
+@Getter
+@Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class TypesDto {
+public class RegionDto {
     private Integer id;
-    private String key;
+    private Integer orderNumber;
     private String nameUz;
     private String nameRu;
     private String nameEn;
     private Boolean visible;
-    private LocalDate createdDate;
-
+    private LocalDateTime createdDate;
 
     // todo
     private String name;

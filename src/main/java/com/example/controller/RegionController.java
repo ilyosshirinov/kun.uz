@@ -1,7 +1,7 @@
 package com.example.controller;
 
-import com.example.dto.RegionCreateDto;
-import com.example.dto.RegionDto;
+import com.example.dto.region.RegionCreateDto;
+import com.example.dto.region.RegionDto;
 import com.example.enums.LanguageEnum;
 import com.example.service.RegionService;
 

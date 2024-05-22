@@ -1,8 +1,8 @@
 package com.example.controller;
 
 
-import com.example.dto.TypesCreateDto;
-import com.example.dto.TypesDto;
+import com.example.dto.types.TypesCreateDto;
+import com.example.dto.types.TypesDto;
 import com.example.enums.LanguageEnum;
 import com.example.service.TypesService;
 import org.springframework.beans.factory.annotation.Autowired;
