@@ -4,7 +4,6 @@ import com.example.dto.ProfileCreateDto;
 import com.example.dto.ProfileDto;
 import com.example.entity.ProfileEntity;
 
-import com.example.enums.Role;
 import com.example.exp.AppBadException;
 import com.example.repository.ProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ProfileService {
