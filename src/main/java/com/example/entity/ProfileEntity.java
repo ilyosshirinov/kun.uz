@@ -1,6 +1,7 @@
 package com.example.entity;
 
-import com.example.enums.Role;
+import com.example.enums.ProfileRole;
+import com.example.enums.ProfileStatus;
 import com.example.enums.Status;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -34,11 +35,11 @@ public class ProfileEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private Status status;
+    private ProfileStatus status;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
-    private Role role;
+    private ProfileRole role;
 
     @Column(name = "photo_id")
     private String photoId;
