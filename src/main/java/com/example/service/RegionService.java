@@ -1,8 +1,8 @@
 package com.example.service;
 
 import com.example.Mapper.RegionMapper;
-import com.example.dto.RegionCreateDto;
-import com.example.dto.RegionDto;
+import com.example.dto.region.RegionCreateDto;
+import com.example.dto.region.RegionDto;
 import com.example.entity.RegionEntity;
 import com.example.enums.LanguageEnum;
 import com.example.exp.AppBadException;

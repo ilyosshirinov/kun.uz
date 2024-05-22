@@ -1,9 +1,8 @@
 package com.example.service;
 
 import com.example.Mapper.TypesMapper;
-import com.example.dto.TypesCreateDto;
-import com.example.dto.TypesDto;
-import com.example.entity.RegionEntity;
+import com.example.dto.types.TypesCreateDto;
+import com.example.dto.types.TypesDto;
 import com.example.entity.TypesEntity;
 import com.example.enums.LanguageEnum;
 import com.example.exp.AppBadException;

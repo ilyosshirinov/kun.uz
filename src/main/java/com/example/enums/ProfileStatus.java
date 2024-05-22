@@ -1,8 +1,8 @@
 package com.example.enums;
 
-public enum Status {
+public enum ProfileStatus {
     ACTIVE,
-    INACTIVE
+    NOT_ACTIVE
 
 
 }

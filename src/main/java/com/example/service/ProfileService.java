@@ -1,11 +1,14 @@
 package com.example.service;
 
-import com.example.dto.ProfileCreateDto;
-import com.example.dto.ProfileDto;
+import com.example.dto.profile.ProfileCreateDto;
+import com.example.dto.profile.ProfileDto;
+import com.example.dto.profile.ProfileFilterCreateDto;
+import com.example.dto.profile.ProfileResponseDto;
 import com.example.entity.ProfileEntity;
 
-import com.example.enums.Role;
+import com.example.enums.ProfileRole;
 import com.example.exp.AppBadException;
+import com.example.repository.ProfileCustomRepository;
 import com.example.repository.ProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -18,13 +21,15 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ProfileService {
 
     @Autowired
     private ProfileRepository profileRepository;
+
+    @Autowired
+    private ProfileCustomRepository profileCustomRepository;
 
     public ProfileDto createProfileService(ProfileCreateDto profileCreateDto) {
         ProfileEntity entity = new ProfileEntity();
@@ -42,9 +47,9 @@ public class ProfileService {
         return toProfileDto(entity);
     }
 
-    public Boolean updateAdminProfileService(Integer id, Role role, ProfileCreateDto profileCreateDto) {
+    public Boolean updateAdminProfileService(Integer id, ProfileRole role, ProfileCreateDto profileCreateDto) {
         ProfileEntity entity = get(id);
-        if (role.equals(Role.ADMIN)) {
+        if (role.equals(ProfileRole.ROLE_ADMIN)) {
             entity.setName(profileCreateDto.getName());
             entity.setSurname(profileCreateDto.getSurname());
             entity.setEmail(profileCreateDto.getEmail());
@@ -99,6 +104,16 @@ public class ProfileService {
         return false;
     }
 
+    public PageImpl<ProfileDto> filterProfileService(ProfileFilterCreateDto filterCreateDto, Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
+        ProfileResponseDto<ProfileEntity> filterResponse = profileCustomRepository.filterProfile(filterCreateDto, page, size);
+        List<ProfileDto> list = new ArrayList<>();
+        for (ProfileEntity entity : filterResponse.getContent()) {
+            list.add(toProfileDto(entity));
+        }
+        return new PageImpl<>(list, pageable, filterResponse.getTotalCount());
+    }
+
 
     //  TODO METHOD
 
@@ -118,6 +133,7 @@ public class ProfileService {
         dto.setPassword(entity.getPassword());
         dto.setStatus(entity.getStatus());
         dto.setRole(entity.getRole());
+        dto.setVisible(entity.getVisible());
         dto.setCreatedDate(entity.getCreatedDate());
         dto.setPhotoId(entity.getPhotoId());
 
@@ -137,6 +153,7 @@ public class ProfileService {
             dto.setPassword(entity.getPassword());
             dto.setStatus(entity.getStatus());
             dto.setRole(entity.getRole());
+            dto.setVisible(entity.getVisible());
             dto.setCreatedDate(entity.getCreatedDate());
             dto.setPhotoId(entity.getPhotoId());
             list.add(dto);
