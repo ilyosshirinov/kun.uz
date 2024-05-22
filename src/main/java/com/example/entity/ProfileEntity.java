@@ -1,7 +1,7 @@
 package com.example.entity;
 
-import com.example.enums.ProfileRole;
-import com.example.enums.ProfileStatus;
+import com.example.enums.Role;
+import com.example.enums.Status;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -32,16 +32,13 @@ public class ProfileEntity {
     @Column(name = "created_date")
     private LocalDate createdDate = LocalDate.now();
 
-    @Column(name = "visible")
-    private Boolean visible = Boolean.TRUE;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private ProfileStatus status;
+    private Status status;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
-    private ProfileRole role;
+    private Role role;
 
     @Column(name = "photo_id")
     private String photoId;
