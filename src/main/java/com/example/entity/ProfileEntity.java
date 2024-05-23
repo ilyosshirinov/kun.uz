@@ -1,11 +1,10 @@
 package com.example.entity;
 
 import com.example.enums.Role;
-import com.example.enums.Status;
+import com.example.enums.ProfileStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -29,7 +28,7 @@ public class ProfileEntity {
     private LocalDateTime createdDate;
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private Status status;
+    private ProfileStatus status;
 
     @Column(name = "visible")
     private Boolean visible = Boolean.TRUE;

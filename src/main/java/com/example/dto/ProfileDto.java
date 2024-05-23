@@ -1,11 +1,10 @@
 package com.example.dto;
 
 import com.example.enums.Role;
-import com.example.enums.Status;
+import com.example.enums.ProfileStatus;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -24,7 +23,7 @@ public class ProfileDto {
 
     private String password;
 
-    private Status status;
+    private ProfileStatus status;
 
     private Role role;
 

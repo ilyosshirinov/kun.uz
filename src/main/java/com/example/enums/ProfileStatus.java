@@ -1,7 +1,8 @@
 package com.example.enums;
 
-public enum Status {
+public enum ProfileStatus {
     ACTIVE,
     NOT_ACTIVE,
-    BLOCK
+    BLOCK,
+    REGISTRATION
 }

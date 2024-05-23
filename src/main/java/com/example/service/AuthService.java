@@ -3,7 +3,7 @@ package com.example.service;
 import com.example.dto.auth.AuthRegistrationDto;
 import com.example.entity.ProfileEntity;
 import com.example.enums.Role;
-import com.example.enums.Status;
+import com.example.enums.ProfileStatus;
 import com.example.exp.AppBadException;
 import com.example.repository.ProfileRepository;
 import com.example.util.MD5Util;
@@ -19,27 +19,50 @@ public class AuthService {
     @Autowired
     private ProfileRepository profileRepository;
 
-    public String authorization(AuthRegistrationDto dto) {
-            Optional<ProfileEntity> optional = profileRepository.findByEmailAndVisibleTrue(dto.getEmail());
-            if (optional.isPresent()) {
-                throw new AppBadException("Email already exists");
-            }
+    @Autowired
+    private MailSenderService mailSenderService;
 
-            ProfileEntity entity = new ProfileEntity();
-            entity.setName(dto.getName());
-            entity.setSurname(dto.getSurname());
-            entity.setEmail(dto.getEmail());
-            entity.setPassword(MD5Util.getMD5(dto.getPassword()));
+    public String registration(AuthRegistrationDto dto) {
+        Optional<ProfileEntity> optional = profileRepository.findByEmailAndVisibleTrue(dto.getEmail());
+        if (optional.isPresent()) {
+            throw new AppBadException("Email already exists");
+        }
 
-            entity.setCreatedDate(LocalDateTime.now());
-            entity.setRole(Role.ROLE_USER);
-            entity.setStatus(Status.ACTIVE);
+        ProfileEntity entity = new ProfileEntity();
+        entity.setName(dto.getName());
+        entity.setSurname(dto.getSurname());
+        entity.setEmail(dto.getEmail());
+        entity.setPassword(MD5Util.getMD5(dto.getPassword()));
 
-            profileRepository.save(entity);
+        entity.setCreatedDate(LocalDateTime.now());
+        entity.setRole(Role.ROLE_USER);
+        entity.setStatus(ProfileStatus.ACTIVE);
 
-            // send email
+        profileRepository.save(entity);
 
-            return "To complete your registration please verify your email.";
+        // send email
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("Click to the link to complete registration \n");
+        stringBuilder.append("http://localhost:8080/auth/verification/");
+        stringBuilder.append(entity.getId());
+        stringBuilder.append("\n Mazgi.");
+
+        mailSenderService.send(dto.getEmail(), "Complete registration", stringBuilder.toString());
+        return "To complete your registration please verify your email.";
 
     }
+
+    public String authorizationVerification(Integer userId) {
+        Optional<ProfileEntity> optional = profileRepository.findById(userId);
+        if (optional.isEmpty()) {
+            throw new AppBadException("User not found");
+        }
+        ProfileEntity entity = optional.get();
+        if (!entity.getVisible() || !entity.getStatus().equals(ProfileStatus.REGISTRATION)) {
+            throw new AppBadException("Registration not completed");
+        }
+        profileRepository.updateStatus(userId, ProfileStatus.ACTIVE);
+        return "Success";
+    }
+
 }

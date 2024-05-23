@@ -1,4 +1,4 @@
-******************* KUN_UZ *******************
+  ******************* KUN_UZ *******************
 1. Profile
     id,name,surname,email,phone,password,status,role,visible,created_date,photo_id
 2. ArticleType

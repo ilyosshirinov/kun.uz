@@ -1,7 +1,7 @@
 package com.example.dto;
 
 import com.example.enums.Role;
-import com.example.enums.Status;
+import com.example.enums.ProfileStatus;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -30,7 +30,7 @@ public class ProfileCreateDto {
 
     private String photoId;
 
-    private Status status;
+    private ProfileStatus status;
 
     private Role role;
 }
