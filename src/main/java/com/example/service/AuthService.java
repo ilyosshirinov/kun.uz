@@ -10,18 +10,17 @@ import com.example.util.MD5Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
 public class AuthService {
-
     @Autowired
     private ProfileRepository profileRepository;
-
     @Autowired
     private MailSenderService mailSenderService;
+    @Autowired
+    private EmailHistoryService emailHistoryService;
 
     public String registration(AuthRegistrationDto dto) {
         Optional<ProfileEntity> optional = profileRepository.findByEmailAndVisibleTrue(dto.getEmail());
@@ -34,14 +33,54 @@ public class AuthService {
         entity.setSurname(dto.getSurname());
         entity.setEmail(dto.getEmail());
         entity.setPassword(MD5Util.getMD5(dto.getPassword()));
-        entity.setCreatedDate(LocalDate.now());
+
+        entity.setCreatedDate(LocalDateTime.now());
         entity.setRole(ProfileRole.ROLE_USER);
         entity.setStatus(ProfileStatus.REGISTRATION);
+
         profileRepository.save(entity);
+        sendRegistrationEmail(entity.getId(), dto.getEmail());
 
+        return "To complete your registration please verify your email.";
+    }
+
+    public String authorizationVerification(Integer userId) {
+        Optional<ProfileEntity> optional = profileRepository.findById(userId);
+        if (optional.isEmpty()) {
+            throw new AppBadException("User not found");
+        }
+
+        ProfileEntity entity = optional.get();
+
+        emailHistoryService.isNotExpiredEmail(entity.getEmail());// check for expireation date
+
+        if (!entity.getVisible() || !entity.getStatus().equals(ProfileStatus.REGISTRATION)) {
+            throw new AppBadException("Registration not completed");
+        }
+
+        profileRepository.updateStatus(userId, ProfileStatus.ACTIVE);
+        return "Success";
+    }
+
+    public String registrationResend(String email) {
+        Optional<ProfileEntity> optional = profileRepository.findByEmailAndVisibleTrue(email);
+        if (optional.isEmpty()) {
+            throw new AppBadException("Email not exists");
+        }
+        ProfileEntity entity = optional.get();
+
+        if (!entity.getVisible() || !entity.getStatus().equals(ProfileStatus.REGISTRATION)) {
+            throw new AppBadException("Registration not completed");
+        }
+        emailHistoryService.checkEmailLimit(email);
+        sendRegistrationEmail(entity.getId(), email);
+        return "To complete your registration please verify your email.";
+    }
+
+
+    public void sendRegistrationEmail(Integer profileId, String email) {
         // send email
-
-        String url = "http://localhost:8020/api/verification/" + entity.getId();
+        String url = "http://localhost:8080/auth/verification/" + profileId;
         String formatText = "<style>\n" +
                 "    a:link, a:visited {\n" +
                 "        background-color: #f44336;\n" +
@@ -59,29 +98,13 @@ public class AuthService {
                 "<div style=\"text-align: center\">\n" +
                 "    <h1>Welcome to kun.uz web portal</h1>\n" +
                 "    <br>\n" +
-                "    <p>Please click button below to complete registration</p>\n" +
+                "    <p>Please button lick below to complete registration</p>\n" +
                 "    <div style=\"text-align: center\">\n" +
                 "        <a href=\"%s\" target=\"_blank\">This is a link</a>\n" +
                 "    </div>";
-
         String text = String.format(formatText, url);
-        mailSenderService.send(dto.getEmail(), "Complete registration", text);
-        return "To complete your registration please verify your email.";
-
+        mailSenderService.send(email, "Complete registration", text);
+        emailHistoryService.crete(email, text); // create history
     }
-
-
-    public String authorizationVerification(Integer userId) {
-        Optional<ProfileEntity> optional = profileRepository.findById(userId);
-        if (optional.isEmpty()) {
-            throw new AppBadException("User not found");
-        }
-        ProfileEntity entity = optional.get();
-        if (!entity.getVisible() || !entity.getStatus().equals(ProfileStatus.REGISTRATION)) {
-            throw new AppBadException("Registration is not completed");
-        }
-        profileRepository.updateStatus(userId, ProfileStatus.ACTIVE);
-        return "Success";
-    }
-
 }
+
