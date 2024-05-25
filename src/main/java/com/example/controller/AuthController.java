@@ -15,20 +15,32 @@ public class AuthController {
 
     @PostMapping("/registration")
     public ResponseEntity<String> registration(@Valid @RequestBody AuthRegistrationDto dto) {
-        String body = authService.registration(dto);
+        // todo 1. Registration (only USER) +
+        String body = authService.registrationService(dto);
         return ResponseEntity.ok().body(body);
     }
 
     @GetMapping("/verification/{userId}")
     public ResponseEntity<String> verification(@PathVariable("userId") Integer userId) {
-        String body = authService.authorizationVerification(userId);
+        // todo 3. Verification mail
+        String body = authService.authorizationVerificationService(userId);
         return ResponseEntity.ok().body(body);
     }
 
     @GetMapping("/registration/resend/{email}")
     public ResponseEntity<String> registrationResend(@PathVariable("email") String email) {
-        String body = authService.registrationResend(email);
+        // todo 4. Resent mail
+        String body = authService.registrationResendService(email);
         return ResponseEntity.ok().body(body);
+    }
+
+
+
+    @GetMapping("login/auth")
+    public ResponseEntity<?> loginAuth(@RequestParam("email") String email,
+                                       @RequestParam("password") String password) {
+        // todo 2. Login (email/phone,password)
+        return ResponseEntity.ok(authService.loginAuthService(email, password));
     }
 
 }

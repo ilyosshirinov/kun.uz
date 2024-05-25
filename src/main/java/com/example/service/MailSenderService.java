@@ -17,12 +17,6 @@ public class MailSenderService {
     String fromMailAddress;
 
     public void send(String toAccount, String subject, String text) {
-        /*SimpleMailMessage msg = new SimpleMailMessage();
-        msg.setFrom(fromMailAddress);
-        msg.setTo(toAccount);
-        msg.setSubject(subject);
-        msg.setText(text);
-        javaMailSender.send(msg);*/
         try {
             MimeMessage msg = javaMailSender.createMimeMessage();
             msg.setFrom(fromMailAddress);
