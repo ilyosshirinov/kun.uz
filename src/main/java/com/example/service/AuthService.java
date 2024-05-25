@@ -1,6 +1,7 @@
 package com.example.service;
 
 import com.example.dto.auth.AuthRegistrationDto;
+import com.example.dto.profile.ProfileDto;
 import com.example.entity.ProfileEntity;
 import com.example.enums.ProfileRole;
 import com.example.enums.ProfileStatus;
@@ -22,10 +23,10 @@ public class AuthService {
     @Autowired
     private EmailHistoryService emailHistoryService;
 
-    public String registration(AuthRegistrationDto dto) {
+    public String registrationService(AuthRegistrationDto dto) {
         Optional<ProfileEntity> optional = profileRepository.findByEmailAndVisibleTrue(dto.getEmail());
         if (optional.isPresent()) {
-            throw new AppBadException("Email already exists");
+            throw new AppBadException("Email allaqachon mavjud");
         }
 
         ProfileEntity entity = new ProfileEntity();
@@ -41,46 +42,70 @@ public class AuthService {
         profileRepository.save(entity);
         sendRegistrationEmail(entity.getId(), dto.getEmail());
 
-        return "To complete your registration please verify your email.";
+        return "Roʻyxatdan oʻtishni yakunlash uchun elektron pochtangizni tasdiqlang.";
     }
 
-    public String authorizationVerification(Integer userId) {
+    public String authorizationVerificationService(Integer userId) {
         Optional<ProfileEntity> optional = profileRepository.findById(userId);
         if (optional.isEmpty()) {
             throw new AppBadException("User not found");
         }
-
         ProfileEntity entity = optional.get();
 
         emailHistoryService.isNotExpiredEmail(entity.getEmail());// check for expireation date
 
         if (!entity.getVisible() || !entity.getStatus().equals(ProfileStatus.REGISTRATION)) {
-            throw new AppBadException("Registration not completed");
+            throw new AppBadException("Registration tugallanmagan");
         }
 
         profileRepository.updateStatus(userId, ProfileStatus.ACTIVE);
         return "Success";
     }
 
-    public String registrationResend(String email) {
+    public String registrationResendService(String email) {
         Optional<ProfileEntity> optional = profileRepository.findByEmailAndVisibleTrue(email);
         if (optional.isEmpty()) {
             throw new AppBadException("Email not exists");
         }
         ProfileEntity entity = optional.get();
 
-        if (!entity.getVisible() || !entity.getStatus().equals(ProfileStatus.REGISTRATION)) {
-            throw new AppBadException("Registration not completed");
+        if (!entity.getVisible() && !entity.getStatus().equals(ProfileStatus.REGISTRATION)) {
+            throw new AppBadException("Roʻyxatdan oʻtish tugallanmagan");
         }
+
         emailHistoryService.checkEmailLimit(email);
         sendRegistrationEmail(entity.getId(), email);
-        return "To complete your registration please verify your email.";
+        return "Roʻyxatdan oʻtishni yakunlash uchun elektron pochtangizni tasdiqlang.";
+    }
+
+    public ProfileDto loginAuthService(String email, String password) {
+        Optional<ProfileEntity> optional = profileRepository.findByEmailAndVisibleTrue(email);
+        if (optional.isEmpty()) {
+            throw new AppBadException("Email not exists");
+        }
+
+        ProfileEntity entity = optional.get();
+        if (!entity.getPassword().equals(MD5Util.getMD5(password))) {
+            throw new AppBadException("Noto'g'ri parol");
+        }
+
+        if (!entity.getStatus().equals(ProfileStatus.ACTIVE)) {
+            throw new AppBadException("User ro'yhatdan o'tmagan");
+        }
+        ProfileDto dto = new ProfileDto();
+        dto.setName(entity.getName());
+        dto.setSurname(entity.getSurname());
+        dto.setEmail(entity.getEmail());
+        dto.setRole(entity.getRole());
+        dto.setStatus(entity.getStatus());
+        return dto;
     }
 
 
+    // TODO          METHOD
     public void sendRegistrationEmail(Integer profileId, String email) {
         // send email
-        String url = "http://localhost:8080/auth/verification/" + profileId;
+        String url = "http://localhost:8020/api/verification/" + profileId;
         String formatText = "<style>\n" +
                 "    a:link, a:visited {\n" +
                 "        background-color: #f44336;\n" +
@@ -106,5 +131,7 @@ public class AuthService {
         mailSenderService.send(email, "Complete registration", text);
         emailHistoryService.crete(email, text); // create history
     }
+
+
 }
 

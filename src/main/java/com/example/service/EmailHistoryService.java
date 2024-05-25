@@ -36,7 +36,7 @@ public class EmailHistoryService {
 
         long count = emailHistoryRepository.countByEmailAndCreatedDateBetween(email, from, to);
         if (count >= 3) {
-            throw new AppBadException("Sms limit reached. Please try after some time");
+            throw new AppBadException("SMS limitiga yetdi. Iltimos, biroz vaqtdan keyin harakat qilib ko'ring");
         }
     }
 
