@@ -23,6 +23,9 @@ public class AuthService {
     @Autowired
     private EmailHistoryService emailHistoryService;
 
+    @Autowired
+    private SmsHistoryService smsService;
+
     public String registrationService(AuthRegistrationDto dto) {
         Optional<ProfileEntity> optional = profileRepository.findByEmailAndVisibleTrue(dto.getEmail());
         if (optional.isPresent()) {
@@ -33,6 +36,7 @@ public class AuthService {
         entity.setName(dto.getName());
         entity.setSurname(dto.getSurname());
         entity.setEmail(dto.getEmail());
+        entity.setPhone(dto.getPhone());
         entity.setPassword(MD5Util.getMD5(dto.getPassword()));
 
         entity.setCreatedDate(LocalDateTime.now());
@@ -45,7 +49,7 @@ public class AuthService {
         return "Roʻyxatdan oʻtishni yakunlash uchun elektron pochtangizni tasdiqlang.";
     }
 
-    public String authorizationVerificationService(Integer userId) {
+    public String authorizationVerificationService(Integer userId) {// todo Emailga yuboramiz 1 kungacha
         Optional<ProfileEntity> optional = profileRepository.findById(userId);
         if (optional.isEmpty()) {
             throw new AppBadException("User not found");
@@ -101,6 +105,37 @@ public class AuthService {
         return dto;
     }
 
+    // TODO          SMS
+
+    public String registrationSmsService(AuthRegistrationDto dto) {
+//        Optional<ProfileEntity> optional = profileRepository.findByEmailAndVisibleTrue(dto.getEmail());
+        Optional<ProfileEntity> optional = profileRepository.findByPhoneAndVisibleTrue(dto.getPhone());
+        if (optional.isPresent()) {
+            throw new AppBadException("Email already exists");
+        }
+
+        ProfileEntity entity = new ProfileEntity();
+        entity.setName(dto.getName());
+        entity.setSurname(dto.getSurname());
+        entity.setEmail(dto.getEmail());
+        entity.setPhone(dto.getPhone());
+        entity.setPassword(MD5Util.getMD5(dto.getPassword()));
+
+        entity.setCreatedDate(LocalDateTime.now());
+        entity.setRole(ProfileRole.ROLE_USER);
+        entity.setStatus(ProfileStatus.REGISTRATION);
+
+        profileRepository.save(entity);
+        // phone send
+        smsService.sendSms(dto.getPhone());
+
+        return "To complete your registration please verify your email.";
+    }
+
+
+
+
+
 
     // TODO          METHOD
     public void sendRegistrationEmail(Integer profileId, String email) {
@@ -129,7 +164,7 @@ public class AuthService {
                 "    </div>";
         String text = String.format(formatText, url);
         mailSenderService.send(email, "Complete registration", text);
-        emailHistoryService.crete(email, text); // create history
+        emailHistoryService.crete(email, text); // todo Email create history
     }
 
 

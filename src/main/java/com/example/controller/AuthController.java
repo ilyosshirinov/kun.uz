@@ -20,6 +20,13 @@ public class AuthController {
         return ResponseEntity.ok().body(body);
     }
 
+    @GetMapping("login/auth")
+    public ResponseEntity<?> loginAuth(@RequestParam("email") String email,
+                                       @RequestParam("password") String password) {
+        // todo 2. Login (email/password)  phone -> tayyormas
+        return ResponseEntity.ok(authService.loginAuthService(email, password));
+    }
+
     @GetMapping("/verification/{userId}")
     public ResponseEntity<String> verification(@PathVariable("userId") Integer userId) {
         // todo 3. Verification mail
@@ -35,12 +42,10 @@ public class AuthController {
     }
 
 
-
-    @GetMapping("login/auth")
-    public ResponseEntity<?> loginAuth(@RequestParam("email") String email,
-                                       @RequestParam("password") String password) {
-        // todo 2. Login (email/phone,password)
-        return ResponseEntity.ok(authService.loginAuthService(email, password));
+    @PostMapping("/registrationSms")
+    public ResponseEntity<String> registrationSms(@Valid @RequestBody AuthRegistrationDto dto) {
+        // todo 1. Registration (only USER) +
+        String body = authService.registrationSmsService(dto);
+        return ResponseEntity.ok().body(body);
     }
-
 }
