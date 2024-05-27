@@ -21,7 +21,7 @@ public interface EmailHistoryRepository extends CrudRepository<EmailHistoryEntit
     List<EmailHistoryEntity> getAllByEmail(String email);
 
     @Query(value = " select * from email_history where created_date between :from and :to order by created_date", nativeQuery = true)
-    List<EmailHistoryEntity> getAllCreatedDate(LocalDate from, LocalDate to);
+    List<EmailHistoryEntity> getAllCreatedDate(LocalDateTime from, LocalDateTime to);
 //    @Query(value = " select * from email_history where created_date between :from and :to order by created_date", nativeQuery = true)
 //    List<EmailHistoryEntity> findAll2(LocalDate from, LocalDate to);
 

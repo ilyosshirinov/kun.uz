@@ -13,5 +13,7 @@ public class AuthRegistrationDto {
     private String email;
     @NotBlank
     private String password;
+    @NotBlank
+    private String phone;
 
 }
