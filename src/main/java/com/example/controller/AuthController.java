@@ -38,13 +38,14 @@ public class AuthController {
     @GetMapping("/verification/sms") // todo Authorize with phone
     public ResponseEntity<String> verificationWithPhone(@RequestParam("code") String code,
                                                         @RequestParam("phone") String phone) {
+        // todo 4. Resent   (phone -> code)
         String response = authService.authorizationWithPhoneService(code, phone);
         return ResponseEntity.ok().body(response);
     }
 
     @GetMapping("/registration/resend/{email}") // todo Resend with email
     public ResponseEntity<String> registrationResend(@PathVariable("email") String email) {
-        // todo 4. Resent mail
+        // todo 4. Resent  (mail -> link)
         String body = authService.authorizeResendEmailService(email);
         return ResponseEntity.ok().body(body);
     }
@@ -57,13 +58,14 @@ public class AuthController {
     @GetMapping("login/auth") // todo Login with email
     public ResponseEntity<?> loginAuth(@RequestParam("email") String email,
                                        @RequestParam("password") String password) {
-        // todo 2. Login (email/password)  phone -> tayyormas
+        // todo 2. Login (email/password)
         return ResponseEntity.ok(authService.loginWithEmailService(email, password));
     }
 
     @GetMapping("/login/phone") // todo Login with phone
     public ResponseEntity<ProfileDto> loginWithPhone(@RequestParam("phone") String phone,
                                                      @RequestParam("password") String password) {
+        // todo 2. Login (phone/password)
         return ResponseEntity.ok(authService.loginWithPhoneService(phone, password));
     }
 }
