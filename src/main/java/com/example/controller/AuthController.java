@@ -1,6 +1,7 @@
 package com.example.controller;
 
 import com.example.dto.auth.AuthRegistrationDto;
+import com.example.dto.profile.ProfileDto;
 import com.example.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,39 +14,56 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
-    @PostMapping("/registration")
-    public ResponseEntity<String> registration(@Valid @RequestBody AuthRegistrationDto dto) {
-        // todo 1. Registration (only USER) +
-        String body = authService.registrationService(dto);
+    @PostMapping("/registration/email") // todo Registration with email
+    public ResponseEntity<String> registrationEmail(@Valid @RequestBody AuthRegistrationDto dto) {
+        // todo 1. Registration Email
+        String body = authService.registrationEmailService(dto);
         return ResponseEntity.ok().body(body);
     }
 
-    @GetMapping("login/auth")
+    @PostMapping("/registration/phone") // todo Registration with phone
+    public ResponseEntity<String> registrationPhone(@Valid @RequestBody AuthRegistrationDto dto) {
+        // todo 1. Registration Phone
+        String body = authService.registrationPhoneService(dto);
+        return ResponseEntity.ok().body(body);
+    }
+
+    @GetMapping("/verification/email/{userId}") // todo Authorize with email
+    public ResponseEntity<String> verificationWithEmail(@PathVariable("userId") Integer userId) {
+        // todo 3. Verification mail
+        String body = authService.authorizationWithEmailService(userId);
+        return ResponseEntity.ok().body(body);
+    }
+
+    @GetMapping("/verification/sms") // todo Authorize with phone
+    public ResponseEntity<String> verificationWithPhone(@RequestParam("code") String code,
+                                                        @RequestParam("phone") String phone) {
+        String response = authService.authorizationWithPhoneService(code, phone);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @GetMapping("/registration/resend/{email}") // todo Resend with email
+    public ResponseEntity<String> registrationResend(@PathVariable("email") String email) {
+        // todo 4. Resent mail
+        String body = authService.authorizeResendEmailService(email);
+        return ResponseEntity.ok().body(body);
+    }
+
+    @GetMapping("/verification/resend/phone") // todo Resend with phone
+    public ResponseEntity<String> verificationResendPhone(@RequestParam("phone") String phone) {
+        return ResponseEntity.ok(authService.authorizeResendPhoneService(phone));
+    }
+
+    @GetMapping("login/auth") // todo Login with email
     public ResponseEntity<?> loginAuth(@RequestParam("email") String email,
                                        @RequestParam("password") String password) {
         // todo 2. Login (email/password)  phone -> tayyormas
-        return ResponseEntity.ok(authService.loginAuthService(email, password));
+        return ResponseEntity.ok(authService.loginWithEmailService(email, password));
     }
 
-    @GetMapping("/verification/{userId}")
-    public ResponseEntity<String> verification(@PathVariable("userId") Integer userId) {
-        // todo 3. Verification mail
-        String body = authService.authorizationVerificationService(userId);
-        return ResponseEntity.ok().body(body);
-    }
-
-    @GetMapping("/registration/resend/{email}")
-    public ResponseEntity<String> registrationResend(@PathVariable("email") String email) {
-        // todo 4. Resent mail
-        String body = authService.registrationResendService(email);
-        return ResponseEntity.ok().body(body);
-    }
-
-
-    @PostMapping("/registrationSms")
-    public ResponseEntity<String> registrationSms(@Valid @RequestBody AuthRegistrationDto dto) {
-        // todo 1. Registration (only USER) +
-        String body = authService.registrationSmsService(dto);
-        return ResponseEntity.ok().body(body);
+    @GetMapping("/login/phone") // todo Login with phone
+    public ResponseEntity<ProfileDto> loginWithPhone(@RequestParam("phone") String phone,
+                                                     @RequestParam("password") String password) {
+        return ResponseEntity.ok(authService.loginWithPhoneService(phone, password));
     }
 }

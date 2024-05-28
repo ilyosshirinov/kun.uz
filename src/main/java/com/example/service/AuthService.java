@@ -3,10 +3,12 @@ package com.example.service;
 import com.example.dto.auth.AuthRegistrationDto;
 import com.example.dto.profile.ProfileDto;
 import com.example.entity.ProfileEntity;
+import com.example.entity.SmsHistoryEntity;
 import com.example.enums.ProfileRole;
 import com.example.enums.ProfileStatus;
 import com.example.exp.AppBadException;
 import com.example.repository.ProfileRepository;
+import com.example.repository.SmsHistoryRepository;
 import com.example.util.MD5Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,11 +24,13 @@ public class AuthService {
     private MailSenderService mailSenderService;
     @Autowired
     private EmailHistoryService emailHistoryService;
-
+    @Autowired
+    private SmsHistoryRepository smsHistoryRepository;
     @Autowired
     private SmsHistoryService smsService;
 
-    public String registrationService(AuthRegistrationDto dto) {
+    // todo Registration with email
+    public String registrationEmailService(AuthRegistrationDto dto) {
         Optional<ProfileEntity> optional = profileRepository.findByEmailAndVisibleTrue(dto.getEmail());
         if (optional.isPresent()) {
             throw new AppBadException("Email allaqachon mavjud");
@@ -44,12 +48,35 @@ public class AuthService {
         entity.setStatus(ProfileStatus.REGISTRATION);
 
         profileRepository.save(entity);
-        sendRegistrationEmail(entity.getId(), dto.getEmail());
+        sendToRegistrationEmail(entity.getId(), dto.getEmail());
 
         return "Roʻyxatdan oʻtishni yakunlash uchun elektron pochtangizni tasdiqlang.";
     }
+    // todo Registration with phone
+    public String registrationPhoneService(AuthRegistrationDto dto) {
+        Optional<ProfileEntity> optional = profileRepository.findByPhoneAndVisibleTrue(dto.getPhone());
+        if (optional.isEmpty()) {
+            throw new AppBadException(dto.getPhone() + " allaqachon mavjud");
+        }
+        ProfileEntity entity = new ProfileEntity();
+        entity.setName(dto.getName());
+        entity.setSurname(dto.getSurname());
+        entity.setEmail(dto.getEmail());
+        entity.setPhone(dto.getPhone());
+        entity.setPassword(MD5Util.getMD5(dto.getPassword()));
 
-    public String authorizationVerificationService(Integer userId) {// todo Emailga yuboramiz 1 kungacha
+        entity.setCreatedDate(LocalDateTime.now());
+        entity.setRole(ProfileRole.ROLE_USER);
+        entity.setStatus(ProfileStatus.REGISTRATION);
+
+        profileRepository.save(entity);
+        smsService.sendSms(dto.getPhone());
+        return "Roʻyxatdan oʻtishni yakunlash uchun telefon raqamingizni tasdiqlang!";
+    }
+
+
+    // todo Authorization with email
+    public String authorizationWithEmailService(Integer userId) {// todo Emailga yuboramiz 1 kungacha
         Optional<ProfileEntity> optional = profileRepository.findById(userId);
         if (optional.isEmpty()) {
             throw new AppBadException("User not found");
@@ -58,15 +85,39 @@ public class AuthService {
 
         emailHistoryService.isNotExpiredEmail(entity.getEmail());// check for expireation date
 
-        if (!entity.getVisible() || !entity.getStatus().equals(ProfileStatus.REGISTRATION)) {
+        if (!entity.getVisible() && !entity.getStatus().equals(ProfileStatus.REGISTRATION)) {
             throw new AppBadException("Registration tugallanmagan");
         }
 
         profileRepository.updateStatus(userId, ProfileStatus.ACTIVE);
         return "Success";
     }
+    //    todo Authorization with phone
+    public String authorizationWithPhoneService(String code, String phone) {
+        Optional<ProfileEntity> entity = profileRepository.findByPhoneAndVisibleTrue(phone);
+        if (entity.isEmpty()) {
+            throw new AppBadException("Profile not found");
+        }
+        ProfileEntity profile = entity.get();
+        if (!profile.getVisible() && !profile.getStatus().equals(ProfileStatus.REGISTRATION)) {
+            throw new AppBadException("Registration is not completed");
+        }
+        Optional<SmsHistoryEntity> optional = smsHistoryRepository.findByPhone(phone);
+        if (optional.isEmpty()) {
+            throw new AppBadException(phone + " no'mer topilmadi.");
+        }
 
-    public String registrationResendService(String email) {
+        SmsHistoryEntity smsHistory = optional.get();
+        if (!smsHistory.getCode().equals(code)) {
+            throw new AppBadException("Bu kod yaroqsiz.");
+        }
+        smsService.isNotExpiredSms(phone);
+        profileRepository.updateStatus(profile.getId(), ProfileStatus.ACTIVE);
+        return "Telefon raqamingiz bilan roʻyxatdan oʻtganligingiz tasdiqlandi!";
+    }
+
+    // todo Authorization link or code resend to email
+    public String authorizeResendEmailService(String email) {
         Optional<ProfileEntity> optional = profileRepository.findByEmailAndVisibleTrue(email);
         if (optional.isEmpty()) {
             throw new AppBadException("Email not exists");
@@ -78,11 +129,27 @@ public class AuthService {
         }
 
         emailHistoryService.checkEmailLimit(email);
-        sendRegistrationEmail(entity.getId(), email);
+        sendToRegistrationEmail(entity.getId(), email);
         return "Roʻyxatdan oʻtishni yakunlash uchun elektron pochtangizni tasdiqlang.";
     }
 
-    public ProfileDto loginAuthService(String email, String password) {
+    // todo Authorization code resend to phone
+    public String authorizeResendPhoneService(String phone) {
+        Optional<ProfileEntity> profileEntity = profileRepository.findByPhoneAndVisibleTrue(phone);
+        if (profileEntity.isEmpty()) {
+            throw new AppBadException("Profile not found");
+        }
+        ProfileEntity profile = profileEntity.get();
+        if (!profile.getVisible() && profile.getStatus().equals(ProfileStatus.REGISTRATION)) {
+            throw new AppBadException("Roʻyxatdan oʻtish tugallanmagan");
+        }
+        smsService.checkSmsLimit(phone);
+        smsService.sendSms(phone);
+        return "Roʻyxatdan oʻtishni yakunlash uchun telefoningizni tasdiqlang!";
+    }
+
+    // todo Login with email
+    public ProfileDto loginWithEmailService(String email, String password) {
         Optional<ProfileEntity> optional = profileRepository.findByEmailAndVisibleTrue(email);
         if (optional.isEmpty()) {
             throw new AppBadException("Email not exists");
@@ -100,45 +167,40 @@ public class AuthService {
         dto.setName(entity.getName());
         dto.setSurname(entity.getSurname());
         dto.setEmail(entity.getEmail());
+        dto.setPhone(entity.getPhone());
         dto.setRole(entity.getRole());
         dto.setStatus(entity.getStatus());
         return dto;
     }
 
-    // TODO          SMS
-
-    public String registrationSmsService(AuthRegistrationDto dto) {
-//        Optional<ProfileEntity> optional = profileRepository.findByEmailAndVisibleTrue(dto.getEmail());
-        Optional<ProfileEntity> optional = profileRepository.findByPhoneAndVisibleTrue(dto.getPhone());
-        if (optional.isPresent()) {
-            throw new AppBadException("Email already exists");
+    // todo Login with phone
+    public ProfileDto loginWithPhoneService(String phone, String password) {
+        Optional<ProfileEntity> profileEntity = profileRepository.findByPhoneAndVisibleTrue(phone);
+        if (profileEntity.isEmpty()) {
+            throw new AppBadException(phone + " mavjud emas");
+        }
+        ProfileEntity entity = profileEntity.get();
+        if (!entity.getPassword().equals(MD5Util.getMD5(password))) {
+            throw new AppBadException("Noto'g'ri parol");
         }
 
-        ProfileEntity entity = new ProfileEntity();
-        entity.setName(dto.getName());
-        entity.setSurname(dto.getSurname());
-        entity.setEmail(dto.getEmail());
-        entity.setPhone(dto.getPhone());
-        entity.setPassword(MD5Util.getMD5(dto.getPassword()));
-
-        entity.setCreatedDate(LocalDateTime.now());
-        entity.setRole(ProfileRole.ROLE_USER);
-        entity.setStatus(ProfileStatus.REGISTRATION);
-
-        profileRepository.save(entity);
-        // phone send
-        smsService.sendSms(dto.getPhone());
-
-        return "To complete your registration please verify your email.";
+        if (entity.getStatus() != ProfileStatus.ACTIVE) {
+            throw new AppBadException("Foydalanuvchi ACTIVE emas");
+        }
+        ProfileDto dto = new ProfileDto();
+        dto.setName(entity.getName());
+        dto.setSurname(entity.getSurname());
+        dto.setEmail(entity.getEmail());
+        dto.setPhone(entity.getPhone());
+        dto.setRole(entity.getRole());
+        dto.setStatus(entity.getStatus());
+        return dto;
     }
 
 
-
-
-
-
     // TODO          METHOD
-    public void sendRegistrationEmail(Integer profileId, String email) {
+    // todo Send link or code for registration
+    public void sendToRegistrationEmail(Integer profileId, String email) {
         // send email
         String url = "http://localhost:8020/api/verification/" + profileId;
         String formatText = "<style>\n" +

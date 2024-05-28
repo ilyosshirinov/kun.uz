@@ -37,6 +37,6 @@ public class EmailHistoryController {
     @GetMapping("getAllPage/email")
     public ResponseEntity<Page<EmailHistoryDto>> getAllPageEmail(@RequestParam("page") Integer page,
                                                                  @RequestParam("size") Integer size) {
-        return ResponseEntity.ok(emailHistoryService.getAllPageEmailService(page, size));
+        return ResponseEntity.ok(emailHistoryService.getAllPageEmailService(page-1, size));
     }
 }

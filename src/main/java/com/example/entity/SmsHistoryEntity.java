@@ -18,15 +18,15 @@ public class SmsHistoryEntity {
     @Column(name = "phone")
     private String phone;
 
-    @Column(name = "message")
+    @Column(name = "message", columnDefinition = "text")
     private String message;
 
-    @Column(name = "code")
+    @Column(name = "code", columnDefinition = "text")
     private String code;
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    private SmsStatus status = SmsStatus.NEW;
+    private SmsStatus status;
 
     @Column(name = "type")
     @Enumerated(EnumType.STRING)
