@@ -1,10 +1,7 @@
 package com.example.service;
 
 
-import com.example.dto.profile.ProfileCreateDto;
-import com.example.dto.profile.ProfileDto;
-import com.example.dto.profile.ProfileFilterCreateDto;
-import com.example.dto.profile.ProfileResponseDto;
+import com.example.dto.profile.*;
 import com.example.entity.ProfileEntity;
 
 import com.example.enums.ProfileRole;
@@ -68,17 +65,11 @@ public class ProfileService {
         }
     }
 
-    public Boolean updateAnyProfileService(String password, ProfileCreateDto profileCreateDto) {
-        ProfileEntity entity = profileRepository.getByPassword(password);
+    public Boolean updateAnyProfileService(Integer id, ProfileUpdateDto profileUpdateDto) {
+        ProfileEntity entity = get(id);
         if (entity != null) {
-            entity.setName(profileCreateDto.getName());
-            entity.setSurname(profileCreateDto.getSurname());
-            entity.setEmail(profileCreateDto.getEmail());
-            entity.setPhone(profileCreateDto.getPhone());
-            entity.setPassword(profileCreateDto.getPassword());
-            entity.setStatus(profileCreateDto.getStatus());
-            entity.setRole(profileCreateDto.getRole());
-            entity.setPhotoId(profileCreateDto.getPhotoId());
+            entity.setName(profileUpdateDto.getName());
+            entity.setSurname(profileUpdateDto.getSurname());
 
             profileRepository.save(entity);
             return true;

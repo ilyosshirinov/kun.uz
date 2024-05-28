@@ -1,5 +1,6 @@
 package com.example.service;
 
+import com.example.dto.auth.AuthDto;
 import com.example.dto.auth.AuthRegistrationDto;
 import com.example.dto.profile.ProfileDto;
 import com.example.entity.ProfileEntity;
@@ -9,6 +10,7 @@ import com.example.enums.ProfileStatus;
 import com.example.exp.AppBadException;
 import com.example.repository.ProfileRepository;
 import com.example.repository.SmsHistoryRepository;
+import com.example.util.JWTUtil;
 import com.example.util.MD5Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,6 +54,7 @@ public class AuthService {
 
         return "Roʻyxatdan oʻtishni yakunlash uchun elektron pochtangizni tasdiqlang.";
     }
+
     // todo Registration with phone
     public String registrationPhoneService(AuthRegistrationDto dto) {
         Optional<ProfileEntity> optional = profileRepository.findByPhoneAndVisibleTrue(dto.getPhone());
@@ -92,6 +95,7 @@ public class AuthService {
         profileRepository.updateStatus(userId, ProfileStatus.ACTIVE);
         return "Success";
     }
+
     //    todo Authorization with phone
     public String authorizationWithPhoneService(String code, String phone) {
         Optional<ProfileEntity> entity = profileRepository.findByPhoneAndVisibleTrue(phone);
@@ -149,29 +153,30 @@ public class AuthService {
     }
 
     // todo Login with email
-    public ProfileDto loginWithEmailService(String email, String password) {
-        Optional<ProfileEntity> optional = profileRepository.findByEmailAndVisibleTrue(email);
+    public ProfileDto loginWithEmailService(AuthDto authDTO) {
+        Optional<ProfileEntity> optional = profileRepository.findByEmailAndVisibleTrue(authDTO.getEmail());
         if (optional.isEmpty()) {
-            throw new AppBadException("Email not exists");
+            throw new AppBadException("User not found");
         }
-
         ProfileEntity entity = optional.get();
-        if (!entity.getPassword().equals(MD5Util.getMD5(password))) {
-            throw new AppBadException("Noto'g'ri parol");
+        if (!entity.getPassword().equals(MD5Util.getMD5(authDTO.getPassword()))) {
+            throw new AppBadException("Wrong password");
         }
-
-        if (!entity.getStatus().equals(ProfileStatus.ACTIVE)) {
-            throw new AppBadException("User ro'yhatdan o'tmagan");
+        if (entity.getStatus() != ProfileStatus.ACTIVE) {
+            throw new AppBadException("User is not active");
         }
         ProfileDto dto = new ProfileDto();
+//        dto.setId(entity.getId());
         dto.setName(entity.getName());
         dto.setSurname(entity.getSurname());
         dto.setEmail(entity.getEmail());
         dto.setPhone(entity.getPhone());
         dto.setRole(entity.getRole());
-        dto.setStatus(entity.getStatus());
+//        dto.setStatus(entity.getStatus());
+        dto.setJwt(JWTUtil.encode(entity.getId(), entity.getRole()));
         return dto;
     }
+
 
     // todo Login with phone
     public ProfileDto loginWithPhoneService(String phone, String password) {
@@ -202,7 +207,7 @@ public class AuthService {
     // todo Send link or code for registration
     public void sendToRegistrationEmail(Integer profileId, String email) {
         // send email
-        String url = "http://localhost:8020/api/verification/" + profileId;
+        String url = "http://localhost:8020/api/verification/email/" + profileId;
         String formatText = "<style>\n" +
                 "    a:link, a:visited {\n" +
                 "        background-color: #f44336;\n" +
