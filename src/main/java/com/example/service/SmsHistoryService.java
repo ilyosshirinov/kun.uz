@@ -115,8 +115,7 @@ public class SmsHistoryService {
 
     }
 
-    // Sms history save method
-    /*bor*/
+    //todo Sms history save method
     public void saveSmsHistory(String phone, String code, String message) {
         SmsHistoryEntity entity = new SmsHistoryEntity();
         entity.setPhone(phone);

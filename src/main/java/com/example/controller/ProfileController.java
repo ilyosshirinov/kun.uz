@@ -33,14 +33,14 @@ public class ProfileController {
     }
 
     @PostMapping("/updateAdmin/profile")
-    public ResponseEntity<Boolean> updateAdminProfile(@RequestParam("id") Integer id,
-                                                      @RequestParam("role") ProfileRole role,
-                                                      @RequestBody ProfileCreateDto profileCreateDto) {
+    public ResponseEntity<ProfileDto> updateAdminProfile(@RequestHeader("Authorization") String token,
+                                                         @RequestBody ProfileCreateDto profileCreateDto) {
         // todo 2. Update Profile (ADMIN)
-        return ResponseEntity.ok(profileService.updateAdminProfileService(id, role, profileCreateDto));
+        SecurityUtil.getJwtDTO(token, ProfileRole.ROLE_ADMIN);
+        return ResponseEntity.ok(profileService.updateAdminProfileService(profileCreateDto));
     }
 
-    @PostMapping("/updateAny/profile") // toda current
+    @PostMapping("/updateAny/profile") // todo current
     public ResponseEntity<Boolean> updateAnyProfile(@RequestHeader("Authorization") String token,
                                                     @Valid @RequestBody ProfileUpdateDto profileUpdateDto) {
         // todo 3. Update Profile Detail (ANY) (Profile updates own details)
@@ -49,15 +49,19 @@ public class ProfileController {
     }
 
     @PostMapping("/allAdmin/profile")
-    public ResponseEntity<Page<ProfileDto>> allAdminProfile(@RequestParam("page") Integer page,
+    public ResponseEntity<Page<ProfileDto>> allAdminProfile(@RequestHeader("Authorization") String token,
+                                                            @RequestParam("page") Integer page,
                                                             @RequestParam("size") Integer size) {
         // todo 4. Profile List (ADMIN) (Pagination)
+        SecurityUtil.getJwtDTO(token, ProfileRole.ROLE_ADMIN);
         return ResponseEntity.ok(profileService.allAdminProfileService(page, size));
     }
 
-    @DeleteMapping("/deleteByIdAdmin/profile")
-    public ResponseEntity<Boolean> deleteByIdAdminProfile(@RequestParam("id") Integer id) {
+    @PostMapping("/deleteByIdAdmin/profile")
+    public ResponseEntity<Boolean> deleteByIdAdminProfile(@RequestHeader("Authorization") String token,
+                                                          @RequestBody Integer id) {
         // todo 5. Delete Profile By Id (ADMIN)
+        SecurityUtil.getJwtDTO(token, ProfileRole.ROLE_ADMIN);
         return ResponseEntity.ok(profileService.deleteByIdAdminProfile(id));
     }
 

@@ -3,7 +3,9 @@ package com.example.controller;
 import com.example.dto.category.CategoryCreateDto;
 import com.example.dto.category.CategoryDto;
 import com.example.enums.LanguageEnum;
+import com.example.enums.ProfileRole;
 import com.example.service.CategoryService;
+import com.example.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,37 +20,48 @@ public class CategoryController {
     private CategoryService categoryService;
 
     @PostMapping("/create/category")
-    public ResponseEntity<CategoryDto> createCategory(@RequestBody CategoryCreateDto categoryCreateDto) {
+    public ResponseEntity<CategoryDto> createCategory(@RequestHeader("Authorization") String token,
+                                                      @RequestBody CategoryCreateDto categoryCreateDto) {
         // todo 1. Create  (ADMIN)  (order_number,name_uz, name_ru, name_en)
+        SecurityUtil.getJwtDTO(token, ProfileRole.ROLE_ADMIN);
         return ResponseEntity.ok(categoryService.createCategoryService(categoryCreateDto));
     }
 
     @PostMapping("/updateById/category")
-    public ResponseEntity<CategoryDto> updateByIdCategory(@RequestParam("id") Integer id,
+    public ResponseEntity<CategoryDto> updateByIdCategory(@RequestHeader("Authorization") String token,
+                                                          @RequestParam("id") Integer id,
                                                           @RequestBody CategoryCreateDto categoryCreateDto) {
         // todo  2. Update by id (ADMIN)  (order_number,name_uz, name_ru, name_en)
+        SecurityUtil.getJwtDTO(token, ProfileRole.ROLE_ADMIN);
         return ResponseEntity.ok(categoryService.updateByIdCategoryService(id, categoryCreateDto));
     }
 
     @DeleteMapping("/deleteById/category")
-    public ResponseEntity<Boolean> deleteByIdCategory(@RequestParam("id") Integer id) {
+    public ResponseEntity<Boolean> deleteByIdCategory(@RequestHeader("Authorization") String token,
+                                                      @RequestParam("id") Integer id) {
         // todo 3. Delete by id (ADMIN)
+        SecurityUtil.getJwtDTO(token, ProfileRole.ROLE_ADMIN);
         return ResponseEntity.ok(categoryService.deleteByIdCategoryService(id));
     }
 
     @GetMapping("/all/category")
-    public ResponseEntity<List<CategoryDto>> allCategory() {
+    public ResponseEntity<List<CategoryDto>> allCategory(@RequestHeader("Authorization") String token) {
         // todo 4. Get List (ADMIN) - order by order_number (id,order_number,name_uz, name_ru, name_en,visible,created_date)
+        SecurityUtil.getJwtDTO(token, ProfileRole.ROLE_ADMIN);
         return ResponseEntity.ok(categoryService.allCategoryService());
     }
 
     @GetMapping("/lang/category")
     public ResponseEntity<List<CategoryDto>> langCategory(@RequestHeader(value = "Accept-Language", defaultValue = "UZ") LanguageEnum lang) {
+        // todo 5.1 Get By Lang (Language keladi shu language dagi name larini berib yuboramiz)
+        //        (id,order_number,name) (name ga tegishli name_... dagi qiymat qo'yiladi.)
         return ResponseEntity.ok(categoryService.langCategoryService(lang));
     }
 
     @GetMapping("/lang2/category")
     public ResponseEntity<List<CategoryDto>> langCategory2(@RequestHeader(value = "Accept-Language", defaultValue = "UZ") LanguageEnum lang) {
+        // todo 5.2 Get By Lang (Language keladi shu language dagi name larini berib yuboramiz)
+        //        (id,order_number,name) (name ga tegishli name_... dagi qiymat qo'yiladi.)
         return ResponseEntity.ok(categoryService.langCategoryService2(lang));
     }
 }
