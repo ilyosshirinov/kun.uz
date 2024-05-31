@@ -32,8 +32,8 @@ public class TypesService {
         return toTypesDto(typesRepository.save(entity));
     }
 
-    public TypesDto updateByIdTypesService(Integer id, TypesCreateDto typesCreateDto) {
-        TypesEntity entity = get(id);
+    public TypesDto updateByIdTypesService(TypesCreateDto typesCreateDto) {
+        TypesEntity entity = new TypesEntity();
         entity.setKey(typesCreateDto.getKey());
         entity.setNameUz(typesCreateDto.getNameUz());
         entity.setNameRu(typesCreateDto.getNameRu());

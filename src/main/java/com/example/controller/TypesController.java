@@ -4,7 +4,9 @@ package com.example.controller;
 import com.example.dto.types.TypesCreateDto;
 import com.example.dto.types.TypesDto;
 import com.example.enums.LanguageEnum;
+import com.example.enums.ProfileRole;
 import com.example.service.TypesService;
+import com.example.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -20,28 +22,35 @@ public class TypesController {
     private TypesService typesService;
 
     @PostMapping("/create/types")
-    public ResponseEntity<TypesDto> createTypes(@RequestBody TypesCreateDto typesCreateDto) {
+    public ResponseEntity<TypesDto> createTypes(@RequestHeader("Authorization") String token,
+                                                @RequestBody TypesCreateDto typesCreateDto) {
         // todo 1. Create  (ADMIN) (order_number,name_uz, name_ru, name_en)
+        SecurityUtil.getJwtDTO(token, ProfileRole.ROLE_ADMIN);
         return ResponseEntity.ok(typesService.createTypesService(typesCreateDto));
     }
 
     @PostMapping("/updateById/types")
-    public ResponseEntity<TypesDto> updateByIdTypes(@RequestParam("id") Integer id,
+    public ResponseEntity<TypesDto> updateByIdTypes(@RequestHeader("Authorization") String token,
                                                     @RequestBody TypesCreateDto typesCreateDto) {
         // todo  2. Update by id (ADMIN) (order_number,name_uz, name_ru, name_en)
-        return ResponseEntity.ok(typesService.updateByIdTypesService(id, typesCreateDto));
+        SecurityUtil.getJwtDTO(token, ProfileRole.ROLE_ADMIN);
+        return ResponseEntity.ok(typesService.updateByIdTypesService(typesCreateDto));
     }
 
-    @DeleteMapping("/deleteById/types")
-    public ResponseEntity<Boolean> deleteByIdTypes(@RequestParam("id") Integer id) {
+    @PostMapping("/deleteById/types")
+    public ResponseEntity<Boolean> deleteByIdTypes(@RequestHeader("Authorization") String token,
+                                                   @RequestBody Integer id) {
         // todo 3. Delete by id (ADMIN)
+        SecurityUtil.getJwtDTO(token, ProfileRole.ROLE_ADMIN);
         return ResponseEntity.ok(typesService.deleteByIdTypesService(id));
     }
 
     @GetMapping("/all/types")
-    public ResponseEntity<Page<TypesDto>> allTypes(@RequestParam("page") Integer page,
+    public ResponseEntity<Page<TypesDto>> allTypes(@RequestHeader("Authorization") String token,
+                                                   @RequestParam("page") Integer page,
                                                    @RequestParam("size") Integer size) {
         // todo 4. Get List (ADMIN) (Pagination) (id, key, name_uz, name_ru, name_en, visible, created_date) // xato
+        SecurityUtil.getJwtDTO(token, ProfileRole.ROLE_ADMIN);
         return ResponseEntity.ok(typesService.allTypesService(page, size));
     }
 

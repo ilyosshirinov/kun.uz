@@ -45,24 +45,19 @@ public class ProfileService {
         return toProfileDto(entity);
     }
 
-    public Boolean updateAdminProfileService(Integer id, ProfileRole role, ProfileCreateDto profileCreateDto) {
-        ProfileEntity entity = get(id);
-        if (role.equals(ProfileRole.ROLE_ADMIN)) {
-            entity.setName(profileCreateDto.getName());
-            entity.setSurname(profileCreateDto.getSurname());
-            entity.setEmail(profileCreateDto.getEmail());
-            entity.setPhone(profileCreateDto.getPhone());
-            entity.setPassword(profileCreateDto.getPassword());
-            entity.setStatus(profileCreateDto.getStatus());
-            entity.setRole(profileCreateDto.getRole());
-            entity.setPhotoId(profileCreateDto.getPhotoId());
+    public ProfileDto updateAdminProfileService(ProfileCreateDto profileCreateDto) {
+        ProfileEntity entity = new ProfileEntity();
+        entity.setName(profileCreateDto.getName());
+        entity.setSurname(profileCreateDto.getSurname());
+        entity.setEmail(profileCreateDto.getEmail());
+        entity.setPhone(profileCreateDto.getPhone());
+        entity.setPassword(profileCreateDto.getPassword());
+        entity.setStatus(profileCreateDto.getStatus());
+        entity.setRole(profileCreateDto.getRole());
+        entity.setPhotoId(profileCreateDto.getPhotoId());
+        profileRepository.save(entity);
+        return toProfileDto(entity);
 
-            profileRepository.save(entity);
-
-            return true;
-        } else {
-            return false;
-        }
     }
 
     public Boolean updateAnyProfileService(Integer id, ProfileUpdateDto profileUpdateDto) {
@@ -148,6 +143,6 @@ public class ProfileService {
         for (ProfileEntity entity : filterResponse.getContent()) {
             list.add(toProfileDto(entity));
         }
-        return new PageImpl<>(list,PageRequest.of(page,size), filterResponse.getTotalCount());
+        return new PageImpl<>(list, PageRequest.of(page, size), filterResponse.getTotalCount());
     }
 }

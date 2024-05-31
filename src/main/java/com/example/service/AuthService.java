@@ -1,6 +1,7 @@
 package com.example.service;
 
-import com.example.dto.auth.AuthDto;
+import com.example.dto.auth.AuthPhonePasswordDto;
+import com.example.dto.auth.AuthEmailPasswordDto;
 import com.example.dto.auth.AuthRegistrationDto;
 import com.example.dto.profile.ProfileDto;
 import com.example.entity.ProfileEntity;
@@ -153,7 +154,7 @@ public class AuthService {
     }
 
     // todo Login with email
-    public ProfileDto loginWithEmailService(AuthDto authDTO) {
+    public ProfileDto loginWithEmailService(AuthEmailPasswordDto authDTO) {
         Optional<ProfileEntity> optional = profileRepository.findByEmailAndVisibleTrue(authDTO.getEmail());
         if (optional.isEmpty()) {
             throw new AppBadException("User not found");
@@ -179,27 +180,27 @@ public class AuthService {
 
 
     // todo Login with phone
-    public ProfileDto loginWithPhoneService(String phone, String password) {
-        Optional<ProfileEntity> profileEntity = profileRepository.findByPhoneAndVisibleTrue(phone);
+    public ProfileDto loginWithPhoneService(AuthPhonePasswordDto dto) {
+        Optional<ProfileEntity> profileEntity = profileRepository.findByPhoneAndVisibleTrue(dto.getPhone());
         if (profileEntity.isEmpty()) {
-            throw new AppBadException(phone + " mavjud emas");
+            throw new AppBadException(dto.getPhone() + " mavjud emas");
         }
         ProfileEntity entity = profileEntity.get();
-        if (!entity.getPassword().equals(MD5Util.getMD5(password))) {
+        if (!entity.getPassword().equals(MD5Util.getMD5(dto.getPassword()))) {
             throw new AppBadException("Noto'g'ri parol");
         }
 
         if (entity.getStatus() != ProfileStatus.ACTIVE) {
             throw new AppBadException("Foydalanuvchi ACTIVE emas");
         }
-        ProfileDto dto = new ProfileDto();
-        dto.setName(entity.getName());
-        dto.setSurname(entity.getSurname());
-        dto.setEmail(entity.getEmail());
-        dto.setPhone(entity.getPhone());
-        dto.setRole(entity.getRole());
-        dto.setStatus(entity.getStatus());
-        return dto;
+        ProfileDto profileDto = new ProfileDto();
+        profileDto.setName(entity.getName());
+        profileDto.setSurname(entity.getSurname());
+        profileDto.setEmail(entity.getEmail());
+        profileDto.setPhone(entity.getPhone());
+        profileDto.setRole(entity.getRole());
+        profileDto.setJwt(JWTUtil.encode(entity.getId(), entity.getRole()));
+        return profileDto;
     }
 
 

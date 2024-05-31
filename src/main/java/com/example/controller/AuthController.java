@@ -1,6 +1,7 @@
 package com.example.controller;
 
-import com.example.dto.auth.AuthDto;
+import com.example.dto.auth.AuthPhonePasswordDto;
+import com.example.dto.auth.AuthEmailPasswordDto;
 import com.example.dto.auth.AuthRegistrationDto;
 import com.example.dto.profile.ProfileDto;
 import com.example.service.AuthService;
@@ -57,15 +58,14 @@ public class AuthController {
     }
 
     @PostMapping("login/auth") // todo Login with email
-    public ResponseEntity<?> loginAuth(@RequestBody AuthDto authDto) {
+    public ResponseEntity<?> loginAuth(@RequestBody AuthEmailPasswordDto authDto) {
         // todo 2. Login (email/password)
         return ResponseEntity.ok(authService.loginWithEmailService(authDto));
     }
 
-    @GetMapping("/login/phone") // todo Login with phone
-    public ResponseEntity<ProfileDto> loginWithPhone(@RequestParam("phone") String phone,
-                                                     @RequestParam("password") String password) {
+    @PostMapping("/login/phone") // todo Login with phone
+    public ResponseEntity<ProfileDto> loginWithPhone(@RequestBody AuthPhonePasswordDto dto) {
         // todo 2. Login (phone/password)
-        return ResponseEntity.ok(authService.loginWithPhoneService(phone, password));
+        return ResponseEntity.ok(authService.loginWithPhoneService(dto));
     }
 }
