@@ -21,8 +21,6 @@ public class RegionController {
     @Autowired
     private RegionService regionService;
 
-    @PostMapping("/adm/create")
-    public ResponseEntity<RegionDto> createRegion(@Valid @RequestBody RegionCreateDto regionCreateDto) {
     @PostMapping("/create/region")
     public ResponseEntity<RegionDto> createRegion(@RequestHeader("Authorization") String token,
                                                   @Valid @RequestBody RegionCreateDto regionCreateDto) {
@@ -31,8 +29,6 @@ public class RegionController {
         return ResponseEntity.ok(regionService.createRegionService(regionCreateDto));
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<List<RegionDto>> allRegion() {
     @PostMapping("/update/region")
     public ResponseEntity<?> updateRegion(@RequestHeader("Authorization") String token,
                                           @RequestParam("id") Integer id,
@@ -68,7 +64,6 @@ public class RegionController {
     public ResponseEntity<List<RegionDto>> getAllByLang2(@RequestHeader(value = "Accept-Language", defaultValue = "UZ") LanguageEnum lang) {
         // todo 5.2 Get By Lang (Language keladi shu language dagi name larini berib yuboramiz)
         //        (id,key,name) (name ga tegishli name_.. dagi qiymat qo'yiladi.) (visible true)
-        return ResponseEntity.ok(regionService.getAllByLang2(lang));
         List<RegionDto> regionDTOList = regionService.getAllByLang2(lang);
         return ResponseEntity.ok().body(regionDTOList);
     }
