@@ -8,7 +8,9 @@ import com.example.dto.profile.ProfileFilterCreateDto;
 import com.example.dto.profile.ProfileUpdateDto;
 import com.example.enums.ProfileRole;
 import com.example.service.ProfileService;
+import com.example.util.HttpRequestUtil;
 import com.example.util.SecurityUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,18 +19,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/profile")
 public class ProfileController {
 
     @Autowired
     private ProfileService profileService;
 
-    @PostMapping("/create/profile")
-    public ResponseEntity<ProfileDto> createProfile(@RequestHeader("Authorization") String token,
-                                                    @Valid @RequestBody ProfileCreateDto profileCreateDto) {
+    @PostMapping("/create")
+    public ResponseEntity<ProfileDto> createProfile(
+                                                    @Valid @RequestBody ProfileCreateDto profileCreateDto,
+                                                    HttpServletRequest request) {
         // todo  1. Create profile (ADMIN) (can create MODERATOR,PUBLISHER))
         //       (name,surname,email,phone,password,status,role)
-        SecurityUtil.getJwtDTO(token, ProfileRole.ROLE_ADMIN);
+        JwtDTO jwtDTO = HttpRequestUtil.getJwtDTO(request, ProfileRole.ROLE_ADMIN);
         return ResponseEntity.ok(profileService.createProfileService(profileCreateDto));
     }
 
