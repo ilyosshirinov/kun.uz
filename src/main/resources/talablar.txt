@@ -89,6 +89,15 @@
         (id,order_number,name_uz, name_ru, name_en,visible,created_date)
     5. Get By Lang (Language keladi shu language dagi name larini berib yuboramiz)
         (id,order_number,name) (name ga tegishli name_... dagi qiymat qo'yiladi.)
+-------
+h/w
+1.  Authorization
+2. Profile
+3. Types
+4. Region
+5. Category
+6. Article(1,2,3,4,5,6)
+-------
 
 6. Article
     1. CREATE (Moderator) status(NotPublished)
@@ -103,6 +112,7 @@
     6. Get Last 3 Article By Types  ordered_by_created_date
         (Berilgan types bo'yicha oxirgi 3ta pubished bo'lgan article ni return qiladi.)
          ArticleShortInfo
+
     7. Get Last 8  Articles witch id not included in given list.
         ([1,2,3,])
         ArticleShortInfo

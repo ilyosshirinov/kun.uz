@@ -1,6 +1,8 @@
 package com.example.util;
 
+import com.example.dto.article.ArticleJwtDto;
 import com.example.dto.auth.JwtDTO;
+import com.example.enums.ArticleStatus;
 import com.example.enums.ProfileRole;
 import io.jsonwebtoken.*;
 
@@ -46,6 +48,44 @@ public class JWTUtil {
             return new JwtDTO(id, profileRole);
         }
         return new JwtDTO(id);
+    }
+
+    // todo Article
+
+    public static String encodeArticle(String id, ArticleStatus articleStatus) {
+        JwtBuilder jwtBuilder = Jwts.builder();
+        jwtBuilder.issuedAt(new Date());
+
+        SignatureAlgorithm sa = SignatureAlgorithm.HS512;
+        SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey.getBytes(), sa.getJcaName());
+
+        jwtBuilder.signWith(secretKeySpec);
+
+        jwtBuilder.claim("id", id);
+        jwtBuilder.claim("status", articleStatus);
+
+        jwtBuilder.expiration(new Date(System.currentTimeMillis() + (tokenLiveTime)));
+        jwtBuilder.issuer("KunUzTest");
+        return jwtBuilder.compact();
+    }
+
+    public static ArticleJwtDto decodeArticle(String token) {
+        SignatureAlgorithm sa = SignatureAlgorithm.HS512;
+        SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey.getBytes(), sa.getJcaName());
+        JwtParser jwtParser = Jwts.parser()
+                .verifyWith(secretKeySpec)
+                .build();
+
+        Jws<Claims> jws = jwtParser.parseSignedClaims(token);
+        Claims claims = jws.getPayload();
+
+        String id = (String) claims.get("id");
+        String status = (String) claims.get("status");
+        if (status != null) {
+            ArticleStatus profileRole = ArticleStatus.valueOf(status);
+            return new ArticleJwtDto(id, profileRole);
+        }
+        return new ArticleJwtDto(id);
     }
 
 
