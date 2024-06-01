@@ -91,6 +91,34 @@ TODO 6. Article
         (id,order_number,name_uz, name_ru, name_en,visible,created_date)
     5. Get By Lang (Language keladi shu language dagi name larini berib yuboramiz)
         (id,order_number,name) (name ga tegishli name_... dagi qiymat qo'yiladi.)
+-------
+TODO H/w
+     1.  Authorization
+     2. Profile
+     3. Types
+     4. Region
+     5. Category
+     6. Article(1,2,3,4,5,6)
+-------
+TODO H/w
+     1.  Spring Security + base64
+     2.  Qilingan barcha api larni http base64 qilib kelish.
+     3.  Article(1,2,3,4,5,6) finish.
+-------
+
+6. Article
+    TODO 1. CREATE (Moderator) status(NotPublished)
+                 (title,description,content,image_id, region_id,category_id, articleType(array))
+             2. Update (Moderator (status to not publish)) (remove old image)
+                 (title,description,content,shared_count,image_id, region_id,category_id)
+             3. Delete Article (MODERATOR)
+             4. Change status by id (PUBLISHER) (publish,not_publish)
+             5. Get Last 5 Article By Types  ordered_by_created_date
+                 (Berilgan types bo'yicha oxirgi 5ta pubished bo'lgan article ni return qiladi.)
+                 ArticleShortInfo
+             6. Get Last 3 Article By Types  ordered_by_created_date
+                 (Berilgan types bo'yicha oxirgi 3ta pubished bo'lgan article ni return qiladi.)
+                  ArticleShortInfo
 
     7. Get Last 8  Articles witch id not included in given list.
         ([1,2,3,])

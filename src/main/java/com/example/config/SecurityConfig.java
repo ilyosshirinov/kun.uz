@@ -18,6 +18,7 @@ import java.util.UUID;
 @EnableWebSecurity
 @Component
 public class SecurityConfig {
+
     @Bean
     public AuthenticationProvider authenticationProvider() {
         // authentication
@@ -30,7 +31,6 @@ public class SecurityConfig {
                 .roles("USER")
                 .build();
 
-
         UserDetails admin = User.builder()
                 .username("admin")
                 .password("{noop}adminjon")
@@ -38,7 +38,7 @@ public class SecurityConfig {
                 .build();
 
         final DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(new InMemoryUserDetailsManager(user));
+        authenticationProvider.setUserDetailsService(new InMemoryUserDetailsManager(user, admin));
         return authenticationProvider;
     }
 
@@ -46,11 +46,23 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> {
             authorizationManagerRequestMatcherRegistry
-                    .requestMatchers("/api/auth/**").permitAll()
-                    .requestMatchers("/api/profile/create").hasRole("ADMIN")
-                    .requestMatchers("/api/region/lang").permitAll()
-                    .requestMatchers("/api/region/adm/**").hasRole("ADMIN")
-                    .requestMatchers("/api/articles/**").permitAll()
+                    .requestMatchers("/auth/**").permitAll()
+                    // TODO PROFILE
+                    .requestMatchers("/profile/adm/**").hasRole("ADMIN")
+                    .requestMatchers("/profile/updateAny").permitAll()
+                    .requestMatchers("/profile/filter").permitAll()
+                    //  TODO TYPES
+                    .requestMatchers("/types/adm/**").hasRole("ADMIN")
+                    .requestMatchers("/types/any/**").permitAll()
+//                    // TODO REGION
+//                    .requestMatchers("/region/adm/**").hasRole("ADMIN")
+//                    .requestMatchers("/region/any/**").permitAll()
+                    // TODO CATEGORY
+                    .requestMatchers("/category/adm/**").hasRole("ADMIN")
+                    .requestMatchers("/category/any/**").permitAll()
+
+                    .requestMatchers("/region/lang").permitAll()
+                    .requestMatchers("/region/adm/**").hasRole("ADMIN")
                     .anyRequest()
                     .authenticated();
         });
@@ -59,7 +71,7 @@ public class SecurityConfig {
         http.cors(AbstractHttpConfigurer::disable);
 
         return http.build();
-
     }
+
 
 }

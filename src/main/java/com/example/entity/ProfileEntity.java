@@ -31,7 +31,7 @@ public class ProfileEntity {
     private String password;
 
     @Column(name = "created_date")
-    private LocalDateTime createdDate;  //  LocalDateTime
+    private LocalDateTime createdDate = LocalDateTime.now();  //  LocalDateTime
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
