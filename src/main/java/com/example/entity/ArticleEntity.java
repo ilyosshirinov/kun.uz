@@ -2,6 +2,8 @@ package com.example.entity;
 
 import com.example.enums.ArticleStatus;
 import com.example.enums.ArticleType;
+import com.example.enums.ProfileRole;
+import com.example.enums.ProfileStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.UuidGenerator;
@@ -33,21 +35,25 @@ public class ArticleEntity {
     @Column(name = "image_id")
     private Integer imageId;
 
-    @Column(name = "region_id")
-    private Integer regionId;
+    @ManyToOne
+    @JoinColumn(name = "region_id", referencedColumnName = "id")
+    private RegionEntity regionId;
 
-    @Column(name = "category_id")
-    private Integer categoryId;
+    @ManyToOne
+    @JoinColumn(name = "category_id", referencedColumnName = "id")
+    private CategoryEntity categoryId;
 
-    @Column(name = "moderator_id")
-    private Integer moderatorId;
+    @ManyToOne
+    @JoinColumn(name = "moderator_id")
+    private ProfileEntity moderator;
 
-    @Column(name = "publisher_id")
-    private Integer publisherId;
+    @ManyToOne
+    @JoinColumn(name = "publisher_id", referencedColumnName = "id")
+    private ProfileEntity publisher;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private ArticleStatus status = ArticleStatus.NOT_PUBLISHED;
+    private ProfileRole status = ProfileRole.ROLE_PUBLISHER;
 
     @Column(name = "created_date")
     private LocalDateTime createdDate = LocalDateTime.now();
@@ -62,9 +68,9 @@ public class ArticleEntity {
     private Integer viewCount;
 
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "type")
-    private ArticleType articleType = ArticleType.NEWS;
+    @OneToMany
+    @JoinColumn(name = "articleTypes")
+    private List<TypesEntity> articleType;
 
 
 }

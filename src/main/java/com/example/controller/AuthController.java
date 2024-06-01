@@ -30,7 +30,7 @@ public class AuthController {
         return ResponseEntity.ok().body(body);
     }
 
-    @GetMapping("/verification/email/{userId}") // todo Authorize with email
+    @GetMapping("/verification/{userId}") // todo Authorize with email
     public ResponseEntity<String> verificationWithEmail(@PathVariable("userId") Integer userId) {
         // todo 3. Verification mail
         String body = authService.authorizationWithEmailService(userId);
@@ -57,7 +57,7 @@ public class AuthController {
         return ResponseEntity.ok(authService.authorizeResendPhoneService(phone));
     }
 
-    @PostMapping("login/auth") // todo Login with email
+    @PostMapping("/login") // todo Login with email
     public ResponseEntity<?> loginAuth(@RequestBody AuthEmailPasswordDto authDto) {
         // todo 2. Login (email/password)
         return ResponseEntity.ok(authService.loginWithEmailService(authDto));

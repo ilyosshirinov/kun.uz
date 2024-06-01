@@ -21,21 +21,12 @@ public class RegionController {
     @Autowired
     private RegionService regionService;
 
-    @PostMapping("/create/region")
+    @PostMapping("/create")
     public ResponseEntity<RegionDto> createRegion(@RequestHeader("Authorization") String token,
                                                   @Valid @RequestBody RegionCreateDto regionCreateDto) {
         // todo 1. Create  (ADMIN) (order_number,name_uz, name_ru, name_en)
         SecurityUtil.getJwtDTO(token, ProfileRole.ROLE_ADMIN);
         return ResponseEntity.ok(regionService.createRegionService(regionCreateDto));
-    }
-
-    @PostMapping("/update/region")
-    public ResponseEntity<?> updateRegion(@RequestHeader("Authorization") String token,
-                                          @RequestParam("id") Integer id,
-                                          @Valid @RequestBody RegionCreateDto regionCreateDto) {
-        // todo 2. Update by id (ADMIN) (name_uz, name_ru, name_en)
-        SecurityUtil.getJwtDTO(token, ProfileRole.ROLE_ADMIN);
-        return ResponseEntity.ok(regionService.updateRegionService(id, regionCreateDto));
     }
 
     @DeleteMapping("/delete/{id}")
@@ -46,7 +37,7 @@ public class RegionController {
         return ResponseEntity.ok(regionService.delete(id));
     }
 
-    @GetMapping("/all/region")
+    @GetMapping("/all")
     public ResponseEntity<List<RegionDto>> allRegion(@RequestHeader("Authorization") String token) {
         // todo 4. Get List (ADMIN) (id,name_uz, name_ru, name_en,visible,order_number,created_date)
         SecurityUtil.getJwtDTO(token, ProfileRole.ROLE_ADMIN);
@@ -74,10 +65,18 @@ public class RegionController {
         return ResponseEntity.ok(regionService.updateRegionService(id, regionCreateDto));
     }
 
-    @DeleteMapping("/adm/delete/{id}")
-    public ResponseEntity<Boolean> deleteRegion(@PathVariable("id") Integer id) {
-        Boolean result = regionService.delete(id);
-        return ResponseEntity.ok().body(result);
-    }
-
+//    @PostMapping("/update")
+//    public ResponseEntity<?> updateRegion(@RequestHeader("Authorization") String token,
+//                                          @RequestParam("id") Integer id,
+//                                          @Valid @RequestBody RegionCreateDto regionCreateDto) {
+//        // todo 2. Update by id (ADMIN) (name_uz, name_ru, name_en)
+//        SecurityUtil.getJwtDTO(token, ProfileRole.ROLE_ADMIN);
+//        return ResponseEntity.ok(regionService.updateRegionService(id, regionCreateDto));
+//    }
+//
+    //    @DeleteMapping("/adm/delete/{id}")
+//    public ResponseEntity<Boolean> deleteRegion(@PathVariable("id") Integer id) {
+//        Boolean result = regionService.delete(id);
+//        return ResponseEntity.ok().body(result);
+//    }
 }

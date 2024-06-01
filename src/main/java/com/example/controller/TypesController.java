@@ -15,13 +15,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/types")
 public class TypesController {
 
     @Autowired
     private TypesService typesService;
 
-    @PostMapping("/create/types")
+    @PostMapping("/create")
     public ResponseEntity<TypesDto> createTypes(@RequestHeader("Authorization") String token,
                                                 @RequestBody TypesCreateDto typesCreateDto) {
         // todo 1. Create  (ADMIN) (order_number,name_uz, name_ru, name_en)
@@ -29,7 +29,7 @@ public class TypesController {
         return ResponseEntity.ok(typesService.createTypesService(typesCreateDto));
     }
 
-    @PostMapping("/updateById/types")
+    @PostMapping("/updateById")
     public ResponseEntity<TypesDto> updateByIdTypes(@RequestHeader("Authorization") String token,
                                                     @RequestBody TypesCreateDto typesCreateDto) {
         // todo  2. Update by id (ADMIN) (order_number,name_uz, name_ru, name_en)
@@ -37,7 +37,7 @@ public class TypesController {
         return ResponseEntity.ok(typesService.updateByIdTypesService(typesCreateDto));
     }
 
-    @PostMapping("/deleteById/types")
+    @PostMapping("/deleteById")
     public ResponseEntity<Boolean> deleteByIdTypes(@RequestHeader("Authorization") String token,
                                                    @RequestBody Integer id) {
         // todo 3. Delete by id (ADMIN)
@@ -45,7 +45,7 @@ public class TypesController {
         return ResponseEntity.ok(typesService.deleteByIdTypesService(id));
     }
 
-    @GetMapping("/all/types")
+    @GetMapping("/all")
     public ResponseEntity<Page<TypesDto>> allTypes(@RequestHeader("Authorization") String token,
                                                    @RequestParam("page") Integer page,
                                                    @RequestParam("size") Integer size) {
@@ -54,7 +54,7 @@ public class TypesController {
         return ResponseEntity.ok(typesService.allTypesService(page, size));
     }
 
-    @GetMapping("/lang/types")
+    @GetMapping("/lang")
     public ResponseEntity<List<TypesDto>> langTypes(@RequestHeader(value = "Accept-Language", defaultValue = "UZ")
                                                     LanguageEnum lang) {
         // todo 5. Get By Lang (Language keladi shu language dagi name larini berib yuboramiz)
@@ -62,7 +62,7 @@ public class TypesController {
         return ResponseEntity.ok(typesService.langTypesService(lang));
     }
 
-    @GetMapping("/lang2/types")
+    @GetMapping("/lang2")
     public ResponseEntity<List<TypesDto>> langTypes2(@RequestHeader(value = "Accept-Language", defaultValue = "UZ")
                                                      LanguageEnum lang) {
         // todo 5.2 Get By Lang (Language keladi shu language dagi name larini berib yuboramiz)

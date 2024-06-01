@@ -16,4 +16,7 @@ public interface ArticleRepository extends CrudRepository<ArticleEntity, Integer
 
     @Query("from ArticleEntity as s where  s.id = ?1")
     ArticleEntity getByIdArticle(String id);
+
+    @Query(value = "select count(*) from region r, category c where r.id=?1 and c.id=?2", nativeQuery = true)
+    Double getAllRegionAndCategory(Integer regionId, Integer categoryId);
 }

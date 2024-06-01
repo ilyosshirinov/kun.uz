@@ -44,18 +44,13 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // authorization
-//        http.authorizeHttpRequests()
-//                .anyRequest()
-//                .authenticated()
-//                .and().formLogin();
-//        return http.build();
         http.authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> {
             authorizationManagerRequestMatcherRegistry
                     .requestMatchers("/api/auth/**").permitAll()
                     .requestMatchers("/api/profile/create").hasRole("ADMIN")
                     .requestMatchers("/api/region/lang").permitAll()
                     .requestMatchers("/api/region/adm/**").hasRole("ADMIN")
+                    .requestMatchers("/api/articles/**").permitAll()
                     .anyRequest()
                     .authenticated();
         });

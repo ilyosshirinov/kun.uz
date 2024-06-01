@@ -35,7 +35,7 @@ public class ProfileController {
         return ResponseEntity.ok(profileService.createProfileService(profileCreateDto));
     }
 
-    @PostMapping("/updateAdmin/profile")
+    @PostMapping("/updateAdmin")
     public ResponseEntity<ProfileDto> updateAdminProfile(@RequestHeader("Authorization") String token,
                                                          @RequestBody ProfileCreateDto profileCreateDto) {
         // todo 2. Update Profile (ADMIN)
@@ -43,7 +43,7 @@ public class ProfileController {
         return ResponseEntity.ok(profileService.updateAdminProfileService(profileCreateDto));
     }
 
-    @PostMapping("/updateAny/profile") // todo current
+    @PostMapping("/updateAny") // todo current
     public ResponseEntity<Boolean> updateAnyProfile(@RequestHeader("Authorization") String token,
                                                     @Valid @RequestBody ProfileUpdateDto profileUpdateDto) {
         // todo 3. Update Profile Detail (ANY) (Profile updates own details)
@@ -51,7 +51,7 @@ public class ProfileController {
         return ResponseEntity.ok(profileService.updateAnyProfileService(dto.getId(), profileUpdateDto));
     }
 
-    @PostMapping("/allAdmin/profile")
+    @PostMapping("/allAdmin")
     public ResponseEntity<Page<ProfileDto>> allAdminProfile(@RequestHeader("Authorization") String token,
                                                             @RequestParam("page") Integer page,
                                                             @RequestParam("size") Integer size) {
@@ -60,7 +60,7 @@ public class ProfileController {
         return ResponseEntity.ok(profileService.allAdminProfileService(page, size));
     }
 
-    @PostMapping("/deleteByIdAdmin/profile")
+    @PostMapping("/deleteByIdAdmin")
     public ResponseEntity<Boolean> deleteByIdAdminProfile(@RequestHeader("Authorization") String token,
                                                           @RequestBody Integer id) {
         // todo 5. Delete Profile By Id (ADMIN)
@@ -68,7 +68,7 @@ public class ProfileController {
         return ResponseEntity.ok(profileService.deleteByIdAdminProfile(id));
     }
 
-    @PostMapping("/filter/profile")
+    @PostMapping("/filter")
     public ResponseEntity<Page<ProfileDto>> filterProfile(@RequestParam("page") Integer page,
                                                           @RequestParam("size") Integer size,
                                                           @RequestBody ProfileFilterCreateDto filterCreateDto) {
