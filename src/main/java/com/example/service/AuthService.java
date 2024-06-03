@@ -174,7 +174,7 @@ public class AuthService {
         dto.setPhone(entity.getPhone());
         dto.setRole(entity.getRole());
 //        dto.setStatus(entity.getStatus());
-        dto.setJwt(JWTUtil.encode(entity.getId(), entity.getRole()));
+        dto.setJwt(JWTUtil.encode(entity.getId(), entity.getEmail(), entity.getRole()));
         return dto;
     }
 
@@ -199,7 +199,7 @@ public class AuthService {
         profileDto.setEmail(entity.getEmail());
         profileDto.setPhone(entity.getPhone());
         profileDto.setRole(entity.getRole());
-        profileDto.setJwt(JWTUtil.encode(entity.getId(), entity.getRole()));
+        profileDto.setJwt(JWTUtil.encode(entity.getId(), entity.getEmail(), entity.getRole()));
         return profileDto;
     }
 

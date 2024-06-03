@@ -8,6 +8,7 @@ import com.example.enums.ProfileRole;
 import com.example.exp.AppBadException;
 import com.example.repository.ProfileCustomRepository;
 import com.example.repository.ProfileRepository;
+import com.example.util.MD5Util;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.data.domain.Page;
@@ -35,7 +36,7 @@ public class ProfileService {
         entity.setSurname(profileCreateDto.getSurname());
         entity.setEmail(profileCreateDto.getEmail());
         entity.setPhone(profileCreateDto.getPhone());
-        entity.setPassword(profileCreateDto.getPassword());
+        entity.setPassword(MD5Util.getMD5(profileCreateDto.getPassword()));
         entity.setStatus(profileCreateDto.getStatus());
         entity.setRole(profileCreateDto.getRole());
         entity.setPhotoId(profileCreateDto.getPhotoId());

@@ -14,7 +14,7 @@ public class JWTUtil {
     private static final int tokenLiveTime = 1000 * 3600 * 24; // 1-day
     private static final String secretKey = "very_long_mazgiskjdh2skjdhadasdasg7fgdfgdfddsfsdgsdfgfdsgerdgfsdf";
 
-    public static String encode(Integer profileId, ProfileRole role) {
+    public static String encode(Integer profileId, String username, ProfileRole role) {
         JwtBuilder jwtBuilder = Jwts.builder();
         jwtBuilder.issuedAt(new Date());
 
@@ -24,6 +24,7 @@ public class JWTUtil {
         jwtBuilder.signWith(secretKeySpec);
 
         jwtBuilder.claim("id", profileId);
+        jwtBuilder.claim("username", username);
         jwtBuilder.claim("role", role);
 
         jwtBuilder.expiration(new Date(System.currentTimeMillis() + (tokenLiveTime)));
@@ -31,7 +32,7 @@ public class JWTUtil {
         return jwtBuilder.compact();
     }
 
-    public static JwtDTO decode(String token){
+    public static JwtDTO decode(String token) {
         SignatureAlgorithm sa = SignatureAlgorithm.HS512;
         SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey.getBytes(), sa.getJcaName());
         JwtParser jwtParser = Jwts.parser()
@@ -42,10 +43,11 @@ public class JWTUtil {
         Claims claims = jws.getPayload();
 
         Integer id = (Integer) claims.get("id");
+        String username = (String) claims.get("username");
         String role = (String) claims.get("role");
         if (role != null) {
             ProfileRole profileRole = ProfileRole.valueOf(role);
-            return new JwtDTO(id, profileRole);
+            return new JwtDTO(id, username, profileRole);
         }
         return new JwtDTO(id);
     }
