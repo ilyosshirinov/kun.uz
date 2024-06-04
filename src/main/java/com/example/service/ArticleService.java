@@ -30,45 +30,31 @@ public class ArticleService {
     @Autowired
     private CategoryRepository categoryRepository;
 
-    @Autowired
-    private RegionService regionService;
-
-    @Autowired
-    private CategoryService categoryService;
-
     public ArticleDto createArticleService(ArticleCreateDto createDto) {
-        Double count = articleRepository.getAllRegionAndCategory(createDto.getRegionId(), createDto.getCategoryId());
-        if (count == 0) {
-            throw new AppBadException(createDto.getRegionId() + " va " + createDto.getCategoryId() + " topilmadi");
+        Optional<RegionEntity> regionEntity = regionRepository.findById(createDto.getRegionId());
+        if (regionEntity.isEmpty()) {
+            throw new AppBadException("Region id: " + createDto.getRegionId() + " topilmadi");
         }
-        RegionEntity region = regionService.get(createDto.getRegionId());
+        Optional<CategoryEntity> categoryEntity = categoryRepository.findById(createDto.getCategoryId());
+        if (categoryEntity.isEmpty()) {
+            throw new AppBadException("Category id: " + createDto.getCategoryId() + " topilmadi");
+        }
         ArticleEntity entity = new ArticleEntity();
         entity.setTitle(createDto.getTitle());
         entity.setDescription(createDto.getDescription());
         entity.setContent(createDto.getContent());
         entity.setImageId(createDto.getImageId());
 
-        Optional<RegionEntity> regionEntity = regionRepository.findById(createDto.getRegionId());
-        RegionDto regionDto = new RegionDto();
-//        regionEntity.setId(regionDto.getId());
         entity.setRegionId(regionEntity.get());
 
-        Optional<CategoryEntity> categoryEntity = categoryRepository.findById(createDto.getCategoryId());
-        CategoryDto categoryDto = new CategoryDto();
-//        categoryEntity.setId(categoryDto.getId());
         entity.setCategoryId(categoryEntity.get());
-
-//        List<TypesEntity> typesEntity = new ArrayList<>();
-//        TypesDto typesDto = new TypesDto();
-//        typesEntity
-//        entity.setArticleType(typesEntity);
 
         articleRepository.save(entity);
 
         return toArticleDto(entity);
     }
 
-    public ArticleDto updateArticleService(Integer imageId, ArticleCreateDto createDto) {
+    public Boolean updateArticleService(Integer imageId, ArticleCreateDto createDto) {
         List<ArticleEntity> entity = articleRepository.findByImageId(imageId);
         if (entity.isEmpty()) {
             throw new AppBadException(imageId + " topilmadi");
@@ -78,18 +64,19 @@ public class ArticleService {
         articleEntity.setDescription(createDto.getDescription());
         articleEntity.setContent(createDto.getContent());
         articleEntity.setImageId(createDto.getImageId());
-        RegionEntity regionEntity = new RegionEntity();
-        RegionDto regionDto = new RegionDto();
-        regionEntity.setId(regionDto.getId());
-        articleEntity.setRegionId(regionEntity);
 
-        CategoryEntity categoryEntity = new CategoryEntity();
-        CategoryDto categoryDto = new CategoryDto();
-        categoryEntity.setId(categoryDto.getId());
-        articleEntity.setCategoryId(categoryEntity);
-        articleEntity.setImageId(createDto.getImageId());
+//        RegionEntity regionEntity = new RegionEntity();
+//        RegionDto regionDto = new RegionDto();
+//        regionEntity.setId(regionDto.getId());
+//        articleEntity.setRegionId(regionEntity);
+//
+//        CategoryEntity categoryEntity = new CategoryEntity();
+//        CategoryDto categoryDto = new CategoryDto();
+//        categoryEntity.setId(categoryDto.getId());
+//        articleEntity.setCategoryId(categoryEntity);
+
         articleRepository.save(articleEntity);
-        return toArticleDto(articleEntity);
+        return true;
 
     }
 

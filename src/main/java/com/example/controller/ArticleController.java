@@ -2,11 +2,7 @@ package com.example.controller;
 
 import com.example.dto.article.ArticleCreateDto;
 import com.example.dto.article.ArticleDto;
-import com.example.entity.ArticleEntity;
-import com.example.entity.CategoryEntity;
-import com.example.enums.ArticleStatus;
 import com.example.service.ArticleService;
-import com.example.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,36 +10,41 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/articles")
+@RequestMapping("/articles")
 public class ArticleController {
 
     @Autowired
     private ArticleService articleService;
 
-    @PostMapping("/create")
+    @PostMapping("/adm/create")
     public ResponseEntity<ArticleDto> createArticle(//@RequestHeader("Authorization") String token,
                                                     @RequestBody ArticleCreateDto createDto) {
 //        SecurityUtil.getCheckArticle(token, ArticleStatus.NOT_PUBLISHED);
+        // todo 1. CREATE (Moderator) status(NotPublished)
+        //         (title,description,content,image_id, region_id,category_id, articleType(array))
         return ResponseEntity.ok(articleService.createArticleService(createDto));
     }
 
-    @GetMapping("/getAll")
+    @GetMapping("/adm/getAll")
     public ResponseEntity<List<ArticleDto>> getAll() {
         return ResponseEntity.ok(articleService.getAll());
     }
 
-    @PostMapping("/update")
-    public ResponseEntity<ArticleDto> updateArticle(@RequestHeader("Authorization") String token,
+    @PostMapping("/adm/update")
+    public ResponseEntity<Boolean> updateArticle(/*@RequestHeader("Authorization") String token,*/
                                                     @RequestParam("imageId") Integer imageId,
                                                     @RequestBody ArticleCreateDto createDto) {
-        SecurityUtil.getCheckArticle(token, ArticleStatus.NOT_PUBLISHED);
+        /*SecurityUtil.getCheckArticle(token, ArticleStatus.NOT_PUBLISHED);*/
+        // todo 2. Update (Moderator (status to not publish)) (remove old image)
+        //         (title,description,content,shared_count,image_id, region_id,category_id)
         return ResponseEntity.ok(articleService.updateArticleService(imageId, createDto));
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteArticle(@RequestHeader("Authorization") String token,
+    @DeleteMapping("/adm/delete")
+    public ResponseEntity<String> deleteArticle(/*@RequestHeader("Authorization") String token,*/
                                                 @RequestParam("id") String id) {
-        SecurityUtil.getCheckArticle(token, ArticleStatus.NOT_PUBLISHED);
+        /*SecurityUtil.getCheckArticle(token, ArticleStatus.NOT_PUBLISHED);*/
+        // todo 3. Delete Article (MODERATOR)
         return ResponseEntity.ok(articleService.deleteArticleService(id));
     }
 

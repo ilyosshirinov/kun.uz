@@ -3,18 +3,14 @@ package com.example.service;
 
 import com.example.dto.profile.*;
 import com.example.entity.ProfileEntity;
-
-import com.example.enums.ProfileRole;
 import com.example.exp.AppBadException;
 import com.example.repository.ProfileCustomRepository;
 import com.example.repository.ProfileRepository;
 import com.example.util.MD5Util;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 

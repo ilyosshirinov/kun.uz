@@ -1,12 +1,10 @@
 package com.example.controller;
 
-import com.example.dto.auth.JwtDTO;
 import com.example.dto.profile.ProfileCreateDto;
 import com.example.dto.profile.ProfileDto;
 import com.example.dto.profile.ProfileFilterCreateDto;
 import com.example.dto.profile.ProfileUpdateDto;
 import com.example.service.ProfileService;
-import com.example.util.SecurityUtil;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

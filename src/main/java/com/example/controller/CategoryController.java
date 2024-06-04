@@ -5,7 +5,7 @@ import com.example.dto.category.CategoryDto;
 import com.example.enums.LanguageEnum;
 import com.example.enums.ProfileRole;
 import com.example.service.CategoryService;
-import com.example.util.SecurityUtil;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
