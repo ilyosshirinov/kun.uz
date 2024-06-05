@@ -5,98 +5,91 @@ import com.example.dto.article.ArticleDto;
 import com.example.dto.category.CategoryDto;
 import com.example.dto.profile.ProfileDto;
 import com.example.dto.region.RegionDto;
-import com.example.dto.types.TypesDto;
 import com.example.entity.*;
 import com.example.exp.AppBadException;
 import com.example.repository.ArticleRepository;
-import com.example.repository.CategoryRepository;
-import com.example.repository.RegionRepository;
+import com.example.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ArticleService {
-
     @Autowired
     private ArticleRepository articleRepository;
-
     @Autowired
-    private RegionRepository regionRepository;
-
+    private CategoryService categoryService;
     @Autowired
-    private CategoryRepository categoryRepository;
+    private RegionService regionService;
+    @Autowired
+    private ArticleTypesService articleTypesService;
 
     public ArticleDto createArticleService(ArticleCreateDto createDto) {
-        Optional<RegionEntity> regionEntity = regionRepository.findById(createDto.getRegionId());
-        if (regionEntity.isEmpty()) {
-            throw new AppBadException("Region id: " + createDto.getRegionId() + " topilmadi");
-        }
-        Optional<CategoryEntity> categoryEntity = categoryRepository.findById(createDto.getCategoryId());
-        if (categoryEntity.isEmpty()) {
-            throw new AppBadException("Category id: " + createDto.getCategoryId() + " topilmadi");
-        }
+
+        ProfileEntity moderator = SecurityUtil.getProfile();
+
         ArticleEntity entity = new ArticleEntity();
         entity.setTitle(createDto.getTitle());
         entity.setDescription(createDto.getDescription());
         entity.setContent(createDto.getContent());
         entity.setImageId(createDto.getImageId());
-
-        entity.setRegionId(regionEntity.get());
-
-        entity.setCategoryId(categoryEntity.get());
+        entity.setRegionId(createDto.getRegionId());
+        entity.setCategoryId(createDto.getCategoryId());
+        entity.setModeratorId(moderator.getId());
+//        entity.setStatus(ProfileRole.ROLE_PUBLISHER);
 
         articleRepository.save(entity);
+        articleTypesService.create(entity.getId(), createDto.getTypesList());
 
         return toArticleDto(entity);
     }
 
-    public Boolean updateArticleService(Integer imageId, ArticleCreateDto createDto) {
-        List<ArticleEntity> entity = articleRepository.findByImageId(imageId);
-        if (entity.isEmpty()) {
-            throw new AppBadException(imageId + " topilmadi");
-        }
-        ArticleEntity articleEntity = new ArticleEntity();
-        articleEntity.setTitle(createDto.getTitle());
-        articleEntity.setDescription(createDto.getDescription());
-        articleEntity.setContent(createDto.getContent());
-        articleEntity.setImageId(createDto.getImageId());
 
-//        RegionEntity regionEntity = new RegionEntity();
-//        RegionDto regionDto = new RegionDto();
-//        regionEntity.setId(regionDto.getId());
-//        articleEntity.setRegionId(regionEntity);
+//    public Boolean updateArticleService(Integer imageId, ArticleCreateDto createDto) {
+//        List<ArticleEntity> entity = articleRepository.findByImageId(imageId);
+//        if (entity.isEmpty()) {
+//            throw new AppBadException(imageId + " topilmadi");
+//        }
+//        ArticleEntity articleEntity = new ArticleEntity();
+//        articleEntity.setTitle(createDto.getTitle());
+//        articleEntity.setDescription(createDto.getDescription());
+//        articleEntity.setContent(createDto.getContent());
+//        articleEntity.setImageId(createDto.getImageId());
 //
-//        CategoryEntity categoryEntity = new CategoryEntity();
-//        CategoryDto categoryDto = new CategoryDto();
-//        categoryEntity.setId(categoryDto.getId());
-//        articleEntity.setCategoryId(categoryEntity);
-
-        articleRepository.save(articleEntity);
-        return true;
-
-    }
-
-    public String deleteArticleService(String id) {
-        ArticleEntity entity = articleRepository.getByIdArticle(id);
-        if (entity != null) {
-            articleRepository.delete(entity);
-            return id + " O'chirildi";
-        }
-        return "Siz izlagan " + id + " topilmadi";
-    }
-
-    public List<ArticleDto> getAll() {
-        Iterable<ArticleEntity> entity = articleRepository.findAll();
-        List<ArticleDto> list = new ArrayList<>();
-        for (ArticleEntity articleEntity : entity) {
-            list.add(toArticleDto(articleEntity));
-        }
-        return list;
-    }
+////        RegionEntity regionEntity = new RegionEntity();
+////        RegionDto regionDto = new RegionDto();
+////        regionEntity.setId(regionDto.getId());
+////        articleEntity.setRegionId(regionEntity);
+////
+////        CategoryEntity categoryEntity = new CategoryEntity();
+////        CategoryDto categoryDto = new CategoryDto();
+////        categoryEntity.setId(categoryDto.getId());
+////        articleEntity.setCategoryId(categoryEntity);
+//
+//        articleRepository.save(articleEntity);
+//        return true;
+//
+//    }
+//
+//    public String deleteArticleService(String id) {
+//        ArticleEntity entity = articleRepository.getByIdArticle(id);
+//        if (entity != null) {
+//            articleRepository.delete(entity);
+//            return id + " O'chirildi";
+//        }
+//        return "Siz izlagan " + id + " topilmadi";
+//    }
+//
+//    public List<ArticleDto> getAll() {
+//        Iterable<ArticleEntity> entity = articleRepository.findAll();
+//        List<ArticleDto> list = new ArrayList<>();
+//        for (ArticleEntity articleEntity : entity) {
+//            list.add(toArticleDto(articleEntity));
+//        }
+//        return list;
+//    }
 
     // TODO               METHOD
     public static ArticleDto toArticleDto(ArticleEntity entity) {
@@ -109,14 +102,14 @@ public class ArticleService {
         dto.setViewCount(entity.getViewCount());
         dto.setImageId(entity.getImageId());
         dto.setCreateDate(entity.getCreatedDate());
-        dto.setPublished_date(entity.getPublishedDate());
+        dto.setPublishedDate(entity.getPublishedDate());
 
         RegionDto regionDto = new RegionDto();
-        regionDto.setId(entity.getRegionId().getId());
+        regionDto.setId(entity.getRegion().getId());
         dto.setRegion(regionDto);
 
         CategoryDto categoryDto = new CategoryDto();
-        categoryDto.setId(entity.getCategoryId().getId());
+        categoryDto.setId(entity.getCategoryId());
         dto.setCategory(categoryDto);
 
         ProfileDto profileDto = new ProfileDto();

@@ -1,16 +1,13 @@
 package com.example.entity;
 
 import com.example.enums.ArticleStatus;
-import com.example.enums.ArticleType;
 import com.example.enums.ProfileRole;
-import com.example.enums.ProfileStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 @Data
 @Entity
@@ -35,25 +32,37 @@ public class ArticleEntity {
     @Column(name = "image_id")
     private Integer imageId;
 
-    @ManyToOne
-    @JoinColumn(name = "region_id", referencedColumnName = "id")
-    private RegionEntity regionId;
+    @Column(name = "region_id")
+    private Integer regionId;
 
-    @ManyToOne
-    @JoinColumn(name = "category_id", referencedColumnName = "id")
-    private CategoryEntity categoryId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "region_id", insertable = false, updatable = false)
+    private RegionEntity region;
 
-    @ManyToOne
-    @JoinColumn(name = "moderator_id")
+    @Column(name = "category_id")
+    private Integer categoryId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", insertable = false, updatable = false)
+    private CategoryEntity category;
+
+    @Column(name = "moderator_id")
+    private Integer moderatorId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "moderator_id", insertable = false, updatable = false)
     private ProfileEntity moderator;
 
-    @ManyToOne
-    @JoinColumn(name = "publisher_id", referencedColumnName = "id")
+    @Column(name = "publisher_id")
+    private Integer publisherId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "publisher_id", insertable = false, updatable = false)
     private ProfileEntity publisher;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private ProfileRole status = ProfileRole.ROLE_PUBLISHER;
+    private ArticleStatus status = ArticleStatus.NOT_PUBLISHED;
 
     @Column(name = "created_date")
     private LocalDateTime createdDate = LocalDateTime.now();
@@ -68,9 +77,9 @@ public class ArticleEntity {
     private Integer viewCount;
 
 
-    @OneToMany
-    @JoinColumn(name = "articleTypes")
-    private List<TypesEntity> articleType;
+//    @OneToMany
+    @Column(name = "articleTypes")
+    private Integer articleType;
 
 
 }

@@ -4,9 +4,7 @@ import com.example.dto.category.CategoryDto;
 import com.example.dto.profile.ProfileDto;
 import com.example.dto.region.RegionDto;
 import com.example.enums.ArticleStatus;
-import com.example.enums.ProfileRole;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -32,7 +30,7 @@ public class ArticleDto {
 
     private LocalDateTime createDate;  // Yangilikni yozilgan vaqti
 
-    private LocalDateTime published_date;                 // Yangilik tahrir(tekshiruv)dan o'tgan va hammaga ko'rsatilgan vaqti
+    private LocalDateTime publishedDate;                 // Yangilik tahrir(tekshiruv)dan o'tgan va hammaga ko'rsatilgan vaqti
 
     private RegionDto region;                   // BU yangilik qayer(region) da sodir bo'ldi
 
@@ -42,7 +40,7 @@ public class ArticleDto {
 
     private ProfileDto publisher;                  // Yangilikni tahrir(tekshirgan) odam
 
-    private ProfileRole status;
+    private ArticleStatus status;
 
     private Boolean visible;
 

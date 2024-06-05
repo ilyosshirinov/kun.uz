@@ -34,7 +34,7 @@ public class ArticleCreateDto {
     @Min(value = 1, message = "Rategory number ning qiymati minimal 1 bo'lsin")
     private Integer categoryId;           // Bu yangilik qanday category ga tegishli  bo'ladi
 
-//    @NotNull(message = "ArticleType Id number bo'sh bo'lishi mumkin emas")
-//    @Min(value = 1, message = "ArticleType Id  number ning qiymati minimal 1 bo'lsin")
-//    private List<Integer> articleTypeIds; // Bu yangilikning artic type lari (bir nechta bo'lishi mumkin)
+    @NotNull(message = "ArticleType Id number bo'sh bo'lishi mumkin emas")
+    @Min(value = 1, message = "ArticleType Id  number ning qiymati minimal 1 bo'lsin")
+    private List<Integer> typesList; // Bu yangilikning artic type lari (bir nechta bo'lishi mumkin)
 }

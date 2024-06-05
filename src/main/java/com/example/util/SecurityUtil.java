@@ -1,10 +1,15 @@
 package com.example.util;
 
+import com.example.config.CustomUserDetail;
 import com.example.dto.article.ArticleJwtDto;
 import com.example.dto.auth.JwtDTO;
+import com.example.entity.ProfileEntity;
 import com.example.enums.ArticleStatus;
 import com.example.enums.ProfileRole;
 import com.example.exp.AppForbiddenException;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 public class SecurityUtil {
     public static JwtDTO getJwtDTO(String token) {
@@ -34,6 +39,17 @@ public class SecurityUtil {
             throw new AppForbiddenException("Method not allowed");
         }
         return dto;
+    }
+    public static Integer getProfileId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetail user = (CustomUserDetail) authentication.getPrincipal();
+        return user.getProfile().getId();
+    }
+
+    public static ProfileEntity getProfile() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetail user = (CustomUserDetail) authentication.getPrincipal();
+        return user.getProfile();
     }
 
 }

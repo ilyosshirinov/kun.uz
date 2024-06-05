@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ArticleRepository extends CrudRepository<ArticleEntity, Integer> {
+public interface ArticleRepository extends CrudRepository<ArticleEntity, String> {
 
     List<ArticleEntity> findByImageId(Integer imageId);
 
