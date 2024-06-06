@@ -17,4 +17,5 @@ public interface ArticleRepository extends CrudRepository<ArticleEntity, String>
     @Query("from ArticleEntity as s where  s.id = ?1")
     ArticleEntity getByIdArticle(String id);
 
+    Optional<ArticleEntity> findByIdAndVisibleTrue(String id);
 }

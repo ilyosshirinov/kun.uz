@@ -3,8 +3,10 @@ package com.example.controller;
 import com.example.dto.article.ArticleCreateDto;
 import com.example.dto.article.ArticleDto;
 import com.example.service.ArticleService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,11 +18,19 @@ public class ArticleController {
     @Autowired
     private ArticleService articleService;
 
+    @PreAuthorize("hasRole('MODERATOR')")
     @PostMapping("/moderator")
     public ResponseEntity<ArticleDto> createArticle(@RequestBody ArticleCreateDto createDto) {
         // todo 1. CREATE (Moderator) status(NotPublished)
         //         (title,description,content,image_id, region_id,category_id, articleType(array))
         return ResponseEntity.ok(articleService.createArticleService(createDto));
+    }
+
+    @PreAuthorize("hasAnyRole('MODERATOR','PUBLISHER')")
+    @PutMapping("/moderator/{id}")
+    public ResponseEntity<ArticleDto> update(@Valid @RequestBody ArticleCreateDto createDto,
+                                             @PathVariable("id") String id) {
+        return ResponseEntity.ok(articleService.update(id, createDto));
     }
 
 

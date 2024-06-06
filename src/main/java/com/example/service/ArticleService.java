@@ -6,6 +6,7 @@ import com.example.dto.category.CategoryDto;
 import com.example.dto.profile.ProfileDto;
 import com.example.dto.region.RegionDto;
 import com.example.entity.*;
+import com.example.enums.ArticleStatus;
 import com.example.exp.AppBadException;
 import com.example.repository.ArticleRepository;
 import com.example.util.SecurityUtil;
@@ -44,6 +45,26 @@ public class ArticleService {
         articleTypesService.create(entity.getId(), createDto.getTypesList());
 
         return toArticleDto(entity);
+    }
+    public ArticleDto update(String articleId, ArticleCreateDto dto) {
+        ArticleEntity entity = get(articleId);
+        entity.setTitle(dto.getTitle());
+        entity.setDescription(dto.getDescription());
+        entity.setContent(dto.getContent());
+        entity.setImageId(dto.getImageId());
+        entity.setRegionId(dto.getRegionId());
+        entity.setCategoryId(dto.getCategoryId());
+        entity.setStatus(ArticleStatus.NOT_PUBLISHED);
+        articleRepository.save(entity);
+
+        articleTypesService.merge(articleId, dto.getTypesList());
+        return toArticleDto(entity);
+    }
+
+    public ArticleEntity get(String id) {
+        return articleRepository.findByIdAndVisibleTrue(id).orElseThrow(() -> {
+            throw new AppBadException("Article not found");
+        });
     }
 
 
