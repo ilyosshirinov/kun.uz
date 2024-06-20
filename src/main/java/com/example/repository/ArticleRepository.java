@@ -12,10 +12,10 @@ import java.util.Optional;
 @Repository
 public interface ArticleRepository extends CrudRepository<ArticleEntity, String> {
 
-    List<ArticleEntity> findByImageId(Integer imageId);
+//    List<ArticleEntity> findByImageId(Integer imageId);
 
-    @Query("from ArticleEntity as s where  s.id = ?1")
-    ArticleEntity getByIdArticle(String id);
+//    @Query("from ArticleEntity as s where  s.id = ?1")
+//    ArticleEntity getByIdArticle(String id);
 
     Optional<ArticleEntity> findByIdAndVisibleTrue(String id);
 }

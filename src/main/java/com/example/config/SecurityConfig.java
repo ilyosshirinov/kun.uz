@@ -77,7 +77,8 @@ public class SecurityConfig {
                     .requestMatchers("/category/any/**").permitAll()
                     // TODO ARTICLE
                     .requestMatchers("/article/moderator", "/article/moderator/**").hasRole("MODERATOR")
-
+                    // TODO
+                    .requestMatchers("/attach/**").permitAll()
                     .requestMatchers("/region/lang").permitAll()
                     .requestMatchers("/region/adm/**").hasRole("ADMIN")
                     .anyRequest()

@@ -30,7 +30,11 @@ public class ArticleEntity {
     private Integer sharedCount;
 
     @Column(name = "image_id")
-    private Integer imageId;
+    private String imageId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "image_id", insertable = false, updatable = false)
+    private AttachEntity attach;
 
     @Column(name = "region_id")
     private Integer regionId;

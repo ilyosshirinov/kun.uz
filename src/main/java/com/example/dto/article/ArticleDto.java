@@ -26,7 +26,7 @@ public class ArticleDto {
 
     private Integer viewCount;    // Yangilikni ko'rilganlar soni
 
-    private Integer imageId;      // Yangilikni rasmining Id si
+    private String imageId;      // Yangilikni rasmining Id si
 
     private LocalDateTime createDate;  // Yangilikni yozilgan vaqti
 
