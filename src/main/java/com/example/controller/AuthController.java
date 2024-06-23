@@ -1,24 +1,36 @@
 package com.example.controller;
 
-import com.example.dto.auth.AuthPhonePasswordDto;
 import com.example.dto.auth.AuthEmailPasswordDto;
+import com.example.dto.auth.AuthPhonePasswordDto;
 import com.example.dto.auth.AuthRegistrationDto;
 import com.example.dto.profile.ProfileDto;
 import com.example.service.AuthService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/auth")
+@Tag(name = "Auth Controller", description = "Api list for authorization, registration and other ... ")
 public class AuthController {
     @Autowired
     private AuthService authService;
 
     @PostMapping("/registration/email") // todo Registration with email
+    @Operation(summary = "Registration", description = "Api for profile registration")
     public ResponseEntity<String> registrationEmail(@Valid @RequestBody AuthRegistrationDto dto) {
         // todo 1. Registration Email
+        log.trace("for tracing purpose: registration");
+        log.debug("for debugging purpose: registration");
+        log.info("for informational purpose: registration");
+        log.warn("for warning purpose: registration");
+        log.error("for logging errors: registration");
+
         String body = authService.registrationEmailService(dto);
         return ResponseEntity.ok().body(body);
     }

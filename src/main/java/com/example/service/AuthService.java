@@ -1,5 +1,6 @@
 package com.example.service;
 
+import com.example.controller.AuthController;
 import com.example.dto.auth.AuthPhonePasswordDto;
 import com.example.dto.auth.AuthEmailPasswordDto;
 import com.example.dto.auth.AuthRegistrationDto;
@@ -13,12 +14,15 @@ import com.example.repository.ProfileRepository;
 import com.example.repository.SmsHistoryRepository;
 import com.example.util.JWTUtil;
 import com.example.util.MD5Util;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
-
+@Slf4j
 @Service
 public class AuthService {
     @Autowired
@@ -31,6 +35,9 @@ public class AuthService {
     private SmsHistoryRepository smsHistoryRepository;
     @Autowired
     private SmsHistoryService smsService;
+
+//    private static final Logger LOGGER = LoggerFactory.getLogger(AuthController.class);
+
 
     // todo Registration with email
     public String registrationEmailService(AuthRegistrationDto dto) {
@@ -125,6 +132,7 @@ public class AuthService {
     public String authorizeResendEmailService(String email) {
         Optional<ProfileEntity> optional = profileRepository.findByEmailAndVisibleTrue(email);
         if (optional.isEmpty()) {
+            log.warn("Email already exists email : {}", email);
             throw new AppBadException("Email not exists");
         }
         ProfileEntity entity = optional.get();

@@ -23,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Calendar;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -30,9 +31,11 @@ public class AttachService {
 
     @Value("${server.url}")
     private String serverUrl;
-
     @Autowired
     private AttachRepository attachRepository;
+
+    @Value("${attach.upload.url}")
+    public String attachUrl;
 
     public String saveToSystem(MultipartFile file) {
         try {
@@ -54,7 +57,7 @@ public class AttachService {
     public AttachDTO saveAttach(MultipartFile file) {
         try {
             String pathFolder = getYmDString(); // 2024/06/08
-            File folder = new File("uploads/" + pathFolder);
+            File folder = new File(attachUrl + pathFolder);
             if (!folder.exists()) {
                 folder.mkdirs();
             }
@@ -63,7 +66,7 @@ public class AttachService {
             String extension = getExtension(file.getOriginalFilename()); // dasda.asdas.dasd.jpg
             // save to system
             byte[] bytes = file.getBytes();
-            Path path = Paths.get("uploads/" + pathFolder + "/" + key + "." + extension);
+            Path path = Paths.get(attachUrl + pathFolder + "/" + key + "." + extension);
             Files.write(path, bytes);
             // save to db
             AttachEntity entity = new AttachEntity();
@@ -107,7 +110,7 @@ public class AttachService {
         try {
             // read from db
             AttachEntity entity = get(attachId);
-            originalImage = ImageIO.read(new File("uploads/" + entity.getPath() + "/" + attachId));
+            originalImage = ImageIO.read(new File(attachUrl + entity.getPath() + "/" + attachId));
             // read from system
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ImageIO.write(originalImage, entity.getExtension(), baos);
@@ -127,7 +130,7 @@ public class AttachService {
         try {
             AttachEntity entity = get(attachId);
             String path = entity.getPath() + "/" + attachId;
-            Path file = Paths.get("uploads/" + path);
+            Path file = Paths.get(attachUrl + path);
             data = Files.readAllBytes(file);
             return data;
         } catch (IOException e) {
@@ -140,7 +143,7 @@ public class AttachService {
         try {
             AttachEntity entity = get(attachId);
             String path = entity.getPath() + "/" + attachId;
-            Path file = Paths.get("uploads/" + path);
+            Path file = Paths.get(attachUrl + path);
             Resource resource = new UrlResource(file.toUri());
 
             if (resource.exists() || resource.isReadable()) {
@@ -176,8 +179,14 @@ public class AttachService {
         dto.setExtension(entity.getExtension());
         dto.setSize(entity.getSize());
         dto.setOriginalName(entity.getOriginalName());
-        // url?
-        dto.setUrl(serverUrl + "/attach/open_general/" + entity.getId());
+        dto.setUrl(serverUrl + "/attach/open/" + entity.getId());
+        return dto;
+    }
+
+    public AttachDTO getDTOWithURL(String attachId) {
+        AttachDTO dto = new AttachDTO();
+        dto.setId(attachId);
+        dto.setUrl(serverUrl + "/attach/open/" + attachId);
         return dto;
     }
 
